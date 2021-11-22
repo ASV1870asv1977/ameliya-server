@@ -1,0 +1,49 @@
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+
+<div class="container-fluid" role="search">
+    <div class="search-catalog form-row">
+
+{#        <div class="col-12 col-sm-auto">#}
+{#            <a role="button" data-toggle="collapse" href="#catalog-menu" aria-expanded="true"#}
+{#               aria-controls="catalog-menu" class="btn btn-catalog text-uppercase">#}
+{#                <svg width="20" height="18" class="svg-icon">#}
+{#                    <use xlink:href="#menu"></use>#}
+{#                </svg>#}
+{#                <span>Каталог</span>#}
+{#            </a>#}
+{#        </div>#}
+
+        <div class="header-search__catalog-btn col-12 col-sm-auto">
+            <a role="button" data-toggle="collapse" href="#catalog-menu" aria-expanded="false"
+               aria-controls="catalog-menu" class="btn btn-catalog">
+                <svg id="modalIsClose" width="20" height="18" class="svg-icon">
+                    <use xlink:href="#menu"></use>
+                </svg>
+                <svg id="modalIsOpen" class="hideIcon" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="18" height="16"
+                     fill="#01b5af"
+                     viewBox="0 0 612.043 612.043" style="enable-background:new 0 0 612.043 612.043;"
+                     xml:space="preserve">
+                                <path d="M397.503,306.011l195.577-195.577c25.27-25.269,25.27-66.213,0-91.482c-25.269-25.269-66.213-25.269-91.481,0
+                            L306.022,214.551L110.445,18.974c-25.269-25.269-66.213-25.269-91.482,0s-25.269,66.213,0,91.482L214.54,306.033L18.963,501.61
+                            c-25.269,25.269-25.269,66.213,0,91.481c25.269,25.27,66.213,25.27,91.482,0l195.577-195.576l195.577,195.576
+                            c25.269,25.27,66.213,25.27,91.481,0c25.27-25.269,25.27-66.213,0-91.481L397.503,306.011z"
+                                      fill="#01b5af"></path>
+                            </svg>
+                <span>Каталог</span>
+            </a>
+        </div>
+
+        <form class="page-hdr_search form-row col-auto flex-grow-1" id="page-hdr_search">
+            <div class="col">
+                <input type="search" class="form-control" placeholder="Поиск по каталогу">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-lg btn-info d-none d-sm-inline-block">Найти</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+

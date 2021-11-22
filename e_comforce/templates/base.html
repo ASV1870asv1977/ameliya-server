@@ -1,0 +1,191 @@
+{% load static wagtailcore_tags wagtailuserbar base_tags %}
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="MobileOptimized" content="375">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="format-detection" content="telephone=no">
+
+
+    <title>
+        {% block title %}
+            {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+        {% endblock %}
+        {% block title_suffix %}
+            {% wagtail_site as current_site %}
+            {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
+        {% endblock %}
+    </title>
+
+    <meta property="og:title" content=""/>
+    <meta property="og:url" content=""/>
+    <meta property="og:description" content=""/>
+    <meta property="og:image" content=""/>
+    <meta property="og:image:type" content="image/jpeg"/>
+    <meta property="og:image:width" content="500"/>
+    <meta property="og:image:height" content="300"/>
+    <meta property="twitter:description" content=""/>
+
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    {# Global stylesheets #}
+
+    <link rel="image_src" href=""/>
+
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+          rel="stylesheet">
+    <script src="{% static 'js/separate-js/modernizr.custom.js' %}"></script>
+    <!-- раньше всех нужно -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es2017%2Ces6%2Ces7%2CIntersectionObserver&flags=gated"></script>
+
+    <!-- Стили bootstrap и др. плагинов в sass (в папках libraries, plugins) -->
+    <link href="{% static 'css/vendors.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Стили плагинов, загруженные по ссылке
+            https://cdn.jsdelivr.net/combine/npm/swiper@6.3/swiper-bundle.min.css,npm/overlayscrollbars@1.13/css/OverlayScrollbars.min.css,npm/@fancyapps/fancybox@3.5/dist/jquery.fancybox.min.css -->
+    <link href="{% static 'css/separate-css/plugins.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/separate-css/select2.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/separate-css/jquery-ui.structure.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/separate-css/jquery-ui.theme.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Общие стили -->
+    <link href="{% static 'css/common.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Необходимые на странице скрипты: current-device 0.10, jquery v3.5, enquire.js v2.1, Bootstrap v4.5,
+         Загружены по ссылке https://cdn.jsdelivr.net/combine/npm/current-device@0.10/umd/current-device.min.js,npm/enquire.js@2.1/dist/enquire.min.js,npm/jquery@3.5,npm/bootstrap@4.5/dist/js/bootstrap.bundle.min.js,npm/rison@0.1/js/rison.min.js,npm/throttle-debounce@3/umd/index.min.js -->
+    <script src="{% static 'js/separate-js/page-start-plugins.js' %}"></script>
+
+    <!-- Подключение полифилов, определение браузера и т.д. -->
+    <script src="{% static 'js/separate-js/init.js' %}"></script>
+
+    <!-- Vue + Vuex: https://cdn.jsdelivr.net/combine/npm/vue@2/dist/vue.js,npm/vuex@3/dist/vuex.js
+        ! Для production использовать vue_vuex_prod.js !
+-->
+    <script src="{% static 'js/separate-js/vue_vuex.js' %}"></script>
+    <script src="{% static 'js/separate-js/select2.full.min.js' %}"></script>
+    <script src="{% static 'js/separate-js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/separate-js/ru.js' %}"></script>
+    <script>
+        /* Инициализация хранилища */
+        Vue.use(window.Vuex);
+
+        const amelia_store = new Vuex.Store({
+            state: {
+                // ajaxURL: '/frontend/ajax',
+                ajaxURL: "cat_data_full_response.json",
+                mobileMode: false
+            }
+        });
+        enquire.register('(max-width: ' + mqBreakPoints.screenMdMax + 'px)', {
+            match: function () {
+                amelia_store.state.mobileMode = true;
+            },
+            unmatch: function () {
+                amelia_store.state.mobileMode = false;
+            }
+        })
+    </script>
+
+    {% block extra_css %}
+        {# Override this in templates to add extra stylesheets #}
+    {% endblock %}
+</head>
+
+<body class="">
+{% wagtailuserbar %}
+
+
+<body data-svg-icons-path="static/img/svg-sprite/svg-symbols.svg">
+<div id="page">
+
+    {% get_site_root as site_root %}
+    {% top_menu parent=site_root calling_page=self %}
+
+
+    {% header_tag %}
+
+    {% block content %}
+
+    {% endblock content %}
+
+    {% footer_tag %}
+
+</div>
+</body>
+
+
+{# Global javascript #}
+<!-- Плагины, загруженные по ссылке
+	https://cdn.jsdelivr.net/combine/npm/swiper@6.3/swiper-bundle.min.js,npm/@fancyapps/fancybox@3.5/dist/jquery.fancybox.min.js,npm/overlayscrollbars@1.13/js/jquery.overlayScrollbars.min.js,npm/hc-sticky@2.2/dist/hc-sticky.min.js,npm/lozad/dist/lozad.min.js
+-->
+            <script src="{% static 'js/separate-js/page-end-plugins.js' %}"></script>
+
+            <!-- 	Общий скрипт	 -->
+            <script src="{% static 'js/common.js' %}" charset="utf-8"></script>
+
+            <!-- Плагины vuejs
+	https://cdn.jsdelivr.net/combine/npm/vue-multiselect@2.1/dist/vue-multiselect.min.js,npm/vue-recaptcha@1.3/dist/vue-recaptcha.min.js,npm/overlayscrollbars-vue@0.2/dist/overlayscrollbars-vue.min.js,npm/vue-snotify@3/vue-snotify.min.js,npm/vue-slider-component@3/dist/vue-slider-component.umd.min.js
+-->
+            <script src="{% static 'js/separate-js/vue-plugins.js' %}"></script>
+
+            <script>
+                if (typeof Vue !== "undefined") {
+                		Vue.use(window.Snotify)
+                		Vue.component('multiselect', window.VueMultiselect.default)
+                		Vue.component('vue-slider', window['vue-slider-component'])
+                		Vue.component('scrollbars', window.OverlayScrollbarsVue.OverlayScrollbarsComponent);
+                		// Vue.component('vue-recaptcha', window.VueRecaptcha)	// Подключается на формы вместо reCaptcha
+
+                		Snotify.setDefaults({
+                			global: {
+                				preventDuplicates: true,
+                			}
+                		})
+
+                	};
+            </script>
+
+            <!-- Плагины, загруженные по ссылке
+	https://cdn.jsdelivr.net/combine/npm/swiper@6.3/swiper-bundle.min.js,npm/@fancyapps/fancybox@3.5/dist/jquery.fancybox.min.js,npm/overlayscrollbars@1.13/js/jquery.overlayScrollbars.min.js,npm/hc-sticky@2.2/dist/hc-sticky.min.js,npm/lozad/dist/lozad.min.js
+-->
+            <script src="{% static 'js/separate-js/page-end-plugins.js' %}"></script>
+
+            <!-- 	Общий скрипт	 -->
+            <script src="{% static 'js/common.js' %}" charset="utf-8"></script>
+
+            <!-- Плагины vuejs
+	https://cdn.jsdelivr.net/combine/npm/vue-multiselect@2.1/dist/vue-multiselect.min.js,npm/vue-recaptcha@1.3/dist/vue-recaptcha.min.js,npm/overlayscrollbars-vue@0.2/dist/overlayscrollbars-vue.min.js,npm/vue-snotify@3/vue-snotify.min.js,npm/vue-slider-component@3/dist/vue-slider-component.umd.min.js
+-->
+            <script src="{% static 'js/separate-js/vue-plugins.js' %}"></script>
+
+            <script>
+                if (typeof Vue !== "undefined") {
+                		Vue.use(window.Snotify)
+                		Vue.component('multiselect', window.VueMultiselect.default)
+                		Vue.component('vue-slider', window['vue-slider-component'])
+                		Vue.component('scrollbars', window.OverlayScrollbarsVue.OverlayScrollbarsComponent);
+                		// Vue.component('vue-recaptcha', window.VueRecaptcha)	// Подключается на формы вместо reCaptcha
+
+                		Snotify.setDefaults({
+                			global: {
+                				preventDuplicates: true,
+                			}
+                		})
+
+                	};
+            </script>
+
+
+
+{% block extra_js %}
+    {# Override this in templates to add extra javascript #}
+{% endblock %}
+</body>
+</html>

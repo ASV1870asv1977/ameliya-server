@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static wagtailimages_tags wagtailcore_tags base_tags %}
+{% get_site_root as site_root %}
+
+
+{% block content %}
+
+    <main class="page_main">
+        <div class="container-fluid">
+            <div class="page-layout my-6">
+                <aside class="page-aside">
+                    <div class="page-aside_block">
+                        <h2 class="page-aside_block-hdr">
+                            <a role="button" data-toggle="collapse" href="#page-side-nav" aria-expanded="true"
+                               aria-controls="page-side-nav"><i class="fal fa-stream mr-3 d-lg-none"></i>Навигация
+                            </a>
+                        </h2>
+                        <nav class="page-aside_block-inner page-nav collapse show" id="page-side-nav">
+                            <div class="page-aside_block-close">
+                                <a role="button" data-toggle="collapse" href="#page-side-nav" aria-expanded="true"
+                                   aria-controls="page-side-nav" class="fal fa-times-circle text-secondary"></a>
+                            </div>
+                            <ul class="nav">
+
+                                {% top_menu_parent parent=self %}
+                            </ul>
+                        </nav>
+                    </div>
+                    <script>
+                        enquire.register('(max-width: ' + mqBreakPoints.screenMdMax + 'px', {
+                            match: function () {
+                                $('.page-aside_block-inner.collapse.show').collapse('hide')
+                            }
+                        });
+                        enquire.register('(min-width: ' + mqBreakPoints.screenLgMin + 'px', {
+                            match: function () {
+                                $('.page-aside_block-inner.collapse').collapse('show')
+                            }
+                        });
+                    </script>
+                </aside>
+
+                <div class="page-main">
+                    <article class="page-main_article">
+                        <h1 class="page-title h2">{{ page.title }}</h1>
+                        <div class="page-main_content text-content">
+                            {% for block in page.body %}
+                                {% if block.block_type == 'heading_general' %}
+                                    {{ block.value }}
+                                {% elif block.block_type == 'article' %}
+                                    {{ block.value }}
+                                {% elif block.block_type == 'article_two_columns' %}
+                                    <div class="columns-2 my-4">
+                                        {{ block.value }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </main>
+
+{% endblock content %}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static wagtailimages_tags wagtailcore_tags base_tags %}
+
+
+{% block extra_css %}
+{% endblock extra_css %}
+
+
+{% block content %}
+
+    <div>
+        <article>
+
+            <section class="index-page_news">
+                {% for block in page.body %}
+                    {% if block.block_type == 'heading' %}
+                        <div class="container-fluid row">
+                            <h2 class="col-xxl-10 offset-xxl-1 font-weight-bold text-uppercase px-0">{{ block.value }}</h2>
+                        </div>
+                    {% elif block.block_type == 'slideshow' %}
+                        <div class="container-fluid row">
+                            <div class="index-page_news-slider swiper-container col-xxl-10 offset-xxl-1">
+                                <div class="swiper-wrapper">
+                                    {% counter 0 as count %}
+                                    {% for slide in block.value %}
+                                        {% image slide.figure original as bgimage %}
+                                        <article class="index-page_news-slide swiper-slide">
+                                            <figure class="index-page_news-img">
+                                                <a href="#" title="Читать полностью">
+                                                    <img src="{{ bgimage.url }}" alt="">
+                                                </a>
+                                            </figure>
+                                            <div class="index-page_news-overlay">
+                                                <button class="btn index-page_news-toggler" data-toggle="collapse"
+                                                        data-target="#index-page_news-collapse-{{ count }}"
+                                                        aria-expanded="false"
+                                                        aria-controls="index-page_news-collapse-{{ count }}">
+                                                    <i class="fas fa-chevron-up"></i>
+                                                </button>
+                                                <div class="row">
+                                                    <time class="col-auto" datetime="">{{ slide.publication_date }}
+                                                    </time>
+                                                    <div class="col">
+                                                        <h4 class="index-page_news-hdr">{{ slide.description }}</h4>
+                                                        <div class="collapse index-page_news-collapse"
+                                                             id="index-page_news-collapse-{{ count }}">
+                                                            <p class="index-page_news-text">{{ slide.full_description }}</p>
+                                                            <p class="mb-0"><a href="#" class="btn btn-info">Открыть</a>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </article>
+                                        {% counter count as count %}
+                                    {% endfor %}
+                                </div>
+                                <div class="swiper-button-prev fas fa-chevron-left"></div>
+                                <div class="swiper-button-next fas fa-chevron-right"></div>
+                            </div>
+                        </div>
+                        <script>
+                            $(function () {
+                                let newsSlider = new Swiper('.index-page_news-slider', {
+                                    spaceBetween: 25,
+                                    slidesPerView: 1,
+                                    watchOverflow: true,
+                                    loop: true,
+                                    navigation: {
+                                        nextEl: '.swiper-button-next',
+                                        prevEl: '.swiper-button-prev',
+                                    },
+                                    breakpoints: {
+                                        // when window width is >= 1200px
+                                        992: {
+                                            slidesPerView: 2,
+                                            spaceBetween: 30
+                                        },
+                                        1500: {
+                                            slidesPerView: 2,
+                                            spaceBetween: 50
+                                        },
+                                    }
+                                })
+                            });
+                        </script>
+                    {% endif %}
+                {% endfor %}
+            </section>
+
+            {% for block in page.body %}
+
+                {% if block.block_type == 'article_intro' %}
+                    {% image block.value.figure original as bgimage %}
+                    <div class="container-fluid">
+                        <article class="index-page_intro">
+                            <figure class="index-page_intro-img col">
+                                <img src="{{ bgimage.url }}" class="img-fluid" alt="Вата, пелёнки">
+                            </figure>
+                            <div class="index-page_intro-content col">
+                                <h1>{{ block.value.heading }}</h1>
+                                <h2>{{ block.value.sub_heading }}</h2>
+                                <p class="text-primary">{{ block.value.text_intro }}</p>
+                                <p><a href="catalog.html" class="btn btn-lg btn-outline-info">Открыть каталог</a>
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+
+        </article>
+    </div>
+
+
+{% endblock content %}
+
+
+{% block extra_js %}
+
+{% endblock extra_js %}
+

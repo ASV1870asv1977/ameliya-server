@@ -1,0 +1,8 @@
+{% load wagtailcore_tags base_tags %}
+
+
+{% for child in menuitems_children %}
+    <li class="nav-item {% if child.title == parent.title %} active {% endif %}">
+        <a class="nav-link" href="{% pageurl child %}"><span>{{ child.title }}</span></a>
+    </li>
+{% endfor %}

@@ -1,0 +1,2980 @@
+{% extends "base.html" %}
+{% load static wagtailimages_tags wagtailcore_tags base_tags %}
+
+{% block extra_css %}
+        <link rel="image_src" href="" />
+
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+        <script src="{% static 'js/separate-js/modernizr.custom.js' %}"></script>
+        <!-- раньше всех нужно -->
+        <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es2017%2Ces6%2Ces7%2CIntersectionObserver&flags=gated"></script> -->
+
+        <!-- Стили bootstrap и др. плагинов в sass (в папках libraries, plugins) -->
+        <link href="{% static 'css/vendors.min.css' %}" rel="stylesheet" type="text/css">
+
+        <!-- Стили плагинов, загруженные по ссылке
+    			https://cdn.jsdelivr.net/combine/npm/swiper@6.3/swiper-bundle.min.css,npm/overlayscrollbars@1.13/css/OverlayScrollbars.min.css,npm/@fancyapps/fancybox@3.5/dist/jquery.fancybox.min.css -->
+        <link href="{% static 'css/separate-css/plugins.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/separate-css/select2.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/separate-css/jquery-ui.structure.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/separate-css/jquery-ui.theme.min.css' %}" rel="stylesheet" type="text/css">
+
+        <!-- Стили плагинов, загруженные по ссылке
+    			https://cdn.jsdelivr.net/combine/npm/vue-multiselect@2.1.6/dist/vue-multiselect.min.css,npm/vue-snotify@3.2.1/styles/simple.min.css,npm/vue-slider-component@3/dist-css/vue-slider-component.css -->
+        <link href="{% static 'css/separate-css/vue-plugins.css' %}" rel="stylesheet" type="text/css">
+
+
+        <!-- Общие стили -->
+        <link href="{% static 'css/common.min.css' %}" rel="stylesheet" type="text/css">
+
+        <!-- Необходимые на странице скрипты: current-device 0.10, jquery v3.5, enquire.js v2.1, Bootstrap v4.5,
+    		 Загружены по ссылке https://cdn.jsdelivr.net/combine/npm/current-device@0.10/umd/current-device.min.js,npm/enquire.js@2.1/dist/enquire.min.js,npm/jquery@3.5,npm/bootstrap@4.5/dist/js/bootstrap.bundle.min.js,npm/rison@0.1/js/rison.min.js,npm/throttle-debounce@3/umd/index.min.js -->
+        <script src="{% static 'js/separate-js/page-start-plugins.js' %}"></script>
+
+        <!-- Подключение полифилов, определение браузера и т.д. -->
+        <script src="{% static 'js/separate-js/init.js' %}"></script>
+
+        <!-- Vue + Vuex: https://cdn.jsdelivr.net/combine/npm/vue@2/dist/vue.js,npm/vuex@3/dist/vuex.js
+    		! Для production использовать vue_vuex_prod.js !
+    -->
+        <script src="{% static 'js/separate-js/vue_vuex.js' %}"></script>
+        <script src="{% static 'js/separate-js/select2.full.min.js' %}"></script>
+        <script src="{% static 'js/separate-js/jquery-ui.min.js' %}"></script>
+        <script src="{% static 'js/separate-js/ru.js' %}"></script>
+        <script>
+            /* Инициализация хранилища */
+            	Vue.use(window.Vuex);
+
+            	const amelia_store = new Vuex.Store({
+            				state: {
+            					// ajaxURL: '/frontend/ajax',
+            					ajaxURL: "cat_data_full_response.json",
+            					mobileMode: false
+            				}
+            	});
+            	enquire.register('(max-width: ' + mqBreakPoints.screenMdMax + 'px)', {
+            		match: function () {
+            			amelia_store.state.mobileMode = true;
+            		},
+            		unmatch: function () {
+            			amelia_store.state.mobileMode = false;
+            		}
+            	})
+        </script>
+{% endblock extra_css %}
+
+{% block content %}
+
+    <body data-svg-icons-path="{% static 'img/svg-sprite/svg-symbols.svg' %}">
+
+        <div id="page">
+
+            <header role="banner" class="page_hdr">
+                <div class="container-fluid navbar navbar-expand-xl">
+
+                    <a class="navbar-brand" href="/" title="На главную страницу">
+                        <img src="static/img/general/logo.svg" class="img-fluid" width="138" height="93" alt="Амелия &mdash; Забота о каждом">
+                    </a>
+
+                    <div class="page-hdr_mid collapse navbar-collapse" id="site-nav">
+                        <nav class="page-hdr_nav navbar-nav" role="navigation">
+                            <div class="nav-item active"><a href="catalog-table.html" class="nav-link"><span>Каталог продукции</span></a>
+                            </div>
+                            <div class="nav-item"><a href="#" class="nav-link"><span>О компании</span></a>
+                            </div>
+                            <div class="nav-item"><a href="#" class="nav-link"><span>Партнёры</span></a>
+                            </div>
+                            <div class="nav-item"><a href="#" class="nav-link"><span>О проекте</span></a>
+                            </div>
+                            <div class="nav-item"><a href="#" class="nav-link"><span>Контакты</span></a>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <div class="page-hdr_right" id="hdr-user-block">
+
+                        <a href="#page-hdr_search" role="button" class="page-hdr_search-trigger btn btn-link d-sm-none" aria-haspopup="true" aria-expanded="false">
+                            <i class="fal fa-lg fa-search mr-md-3"></i>
+                        </a>
+
+                        <div class="dropdown page-hdr_user">
+                            <a href="#" class="dropdown-toggle btn btn-link">
+                                <i class="fal fa-lg fa-unlock mr-2 mr-md-3"></i><span>Личный кабинет</span>
+                            </a>
+                        </div>
+
+                        <div class="dropdown page-hdr_cart">
+                            <a href="#" class="dropdown-toggle btn btn-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fal fa-lg fa-shopping-cart mr-md-3"></i><span>Корзина</span>
+                                <b v-if="cart_items_length" class="badge badge-danger" v-text="cart_items_length"></b>
+                            </a>
+
+                            <section class="page-hdr_cart-list dropdown-menu dropdown-menu-sm-right">
+                                <header class="page-hdr_cart-title">
+                                    <h5><a href="#ссылка на корзину">Корзина</a></h5><span v-html="cart_items_length+' товара'"></span>
+                                </header>
+                                <component is="hdr-cart-item" v-for="(cItem, idx) in cart_items" :key="cItem.item.id" :itemdata="cItem.item" :amount="cItem.amount">
+                                </component>
+                                <footer class="page-hdr_cart-summary">
+                                    <p class="page-hdr_cart-summary_row mb-0"><span class="h5 mb-0">ИТОГО:</span><strong v-text="cart_sum+' руб.'"></strong>
+                                    </p>
+                                    <div class="row justify-content-end">
+                                        <div class="col-auto mb-3">
+                                            <button class="btn btn-outline-pink mb-2" @click="$store.dispatch('hdr/cartAction', {act: 'ClearCart'})">Очистить
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mb-3 pl-0"><a :href="'profile/order-list/' + orderId" class="btn btn-info">Оформить покупку</a>
+                                        </div>
+                                    </div>
+                                </footer>
+                            </section>
+
+                        </div>
+
+                        <div class="dropdown page-hdr_cart_sticky" id="cart-trigger">
+                            <a href="#" class="dropdown-toggle btn btn-light" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fal fa-lg fa-shopping-cart"></i>
+                                <b v-if="cart_items_length" class="badge badge-danger" v-text="cart_items_length"></b>
+                            </a>
+
+                            <section class="page-hdr_cart-list dropdown-menu dropdown-menu-sm-right">
+                                <header class="page-hdr_cart-title">
+                                    <h5>Корзина</h5><span v-html="cart_items_length+' товара'"></span>
+                                </header>
+                                <component is="hdr-cart-item" v-for="(cItem, idx) in cart_items" :key="cItem.item.id" :itemdata="cItem.item" :amount="cItem.amount">
+                                </component>
+                                <footer class="page-hdr_cart-summary">
+                                    <p class="page-hdr_cart-summary_row mb-0"><span class="h5 mb-0">ИТОГО:</span><strong v-text="cart_sum+' руб.'"></strong>
+                                    </p>
+                                    <p><a :href="'profile/order-list/' + orderId" class="btn btn-info">Оформить покупку</a>
+                                    </p>
+                                </footer>
+                            </section>
+
+                        </div>
+
+
+                        <button type="button" class="navbar-toggler btn btn-link" data-toggle="collapse" data-target="#site-nav" aria-controls="site-nav" aria-expanded="false" aria-label="Переключить навигацию">
+                            <i class="far fa-bars mr-md-3"></i><span class="navbar-toggler-text">Навигация</span>
+                        </button>
+
+                        <vue-snotify></vue-snotify>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Шаблон для карточки товара в корзине -->
+                <script type="text/x-template" id="hdr-cart-item_tpl">
+                    <div class="page-hdr_cart-item">
+                        <figure class="hdr_cart-list_item-img">
+                            <a :href="itemdata.link" title="На страницу товара" target="_blank">
+                                <img :src="itemdata.img" class="img-fluid" :alt="itemdata.imgAlt" v-if="itemdata.img">
+                                <img src="static/img/general/item-photo.png" class="img-fluid"
+                                     v-if="itemdata.img == ''">
+                            </a>
+                        </figure>
+                        <div class="hdr_cart-list_item-descr">
+                            <h6 class="hdr_cart-list_item-title">
+                                <a :href="itemdata.link" title="На страницу товара" target="_blank" v-html="itemdata.title"></a>
+                            </h6>
+                            <dl class="cat-item_specs">
+                                <dt>Количество:</dt>
+                                <dd v-text="amount+' шт.'"></dd>
+                            </dl>
+                        </div>
+                        <div class="hdr_cart-list_item-price" v-text="sum+' руб.'"></div>
+                        <div class="pl-3"><a href="#" role="button" class="cat-item_del far fa-trash-alt"
+                                             @click.prevent="remFromCart"
+                                             title="Убрать из заказа"></a></div>
+                    </div>
+                </script>
+
+                <script>
+                    /* START - Хранение данных корзины */
+                    amelia_store.registerModule('hdr', {
+                        namespaced: true,
+
+                        state: () => ({
+                            selectedItems: {},
+                            favorites: [],
+                            discount: 0,
+                            orderId: ''
+                        }),
+
+                        getters: {
+                            /* selectedSum: state => {
+                                return Math.round(Object.values(state.selectedItems).reduce((sum, item) => {
+                                    return isNaN(item.item.price) ? sum : (sum + item.amount * item.item.price);
+                                }, 0) * (1 - state.discount) * 100) / 100;
+                            }, */
+                            selectedSum: state => {
+                                return Math.round(Object.values(state.selectedItems).reduce((sum, item) => {
+                                    return isNaN(item.item.price) ? sum : (sum + item.amount * item.item.price);
+                                }, 0) * 100) / 100;
+                            },
+                            selectedAmount: state => {
+                                return Object.values(state.selectedItems).reduce((sum, item) => {
+                                    // Если количество дробное - округляем
+                                    return !!(item.amount % 1) ? sum + Math.round((item.amount / item.item.step) * 10) / 10 : sum + item.amount;
+                                }, 0);
+                            },
+                            getOrder: state => {
+                                return state.orderId
+                            },
+                            selectedWeight: state => {
+                                return Object.values(state.selectedItems).reduce((sum, item) => {
+                                    // Если вес дробный - округляем
+                                    return item.item.weight ? Math.round((sum + item.item.weight * item.amount) * 1000) / 1000 : sum;
+                                }, 0);
+                            },
+                        },
+
+                        mutations: {
+                            add_selected_prod: (state, payload) => {
+                                Vue.set(state.selectedItems, payload.id, payload.data);
+                                Snotify.success('Добавлено в корзину', snotify_defaults)
+                            },
+
+                            set_selected_prod: (state, payload) => {
+                                let id = payload.id
+                                let selected = state.selectedItems[id] ? state.selectedItems[id].amount : 0;
+
+                                if (payload.amount === 0 && !!state.selectedItems[id]) {
+                                    Vue.delete(state.selectedItems, id);
+                                    Snotify.success('Удалено из корзины', snotify_defaults);
+                                }
+                                else if (selected !== payload.amount) {
+                                    Vue.set(state.selectedItems[id], 'amount', payload.amount);
+                                    Snotify.success('Корзина изменена', snotify_defaults);
+                                }
+                            },
+
+                            rem_selected_prod: (state, id) => {
+                                Vue.delete(state.selectedItems, id);
+                                Snotify.success('Удалено из корзины', snotify_defaults);
+                            },
+
+                            clear_cart: (state) => {
+                                Vue.set(state, 'selectedItems' , {});
+                                Snotify.success('Корзина очищена', snotify_defaults);
+                            },
+
+                            toggle_fav_prod: (state, id) => {
+                                let pos = state.favorites.indexOf(id)
+
+                                if (pos < 0) {
+                                    state.favorites.push(id)
+                                    Snotify.success('Добавлено в избранное', snotify_defaults);
+                                }
+                                else {
+                                    state.favorites.splice(pos, 1);
+                                    Snotify.success('Удалено из избранного', snotify_defaults);
+                                }
+                            },
+
+                            set_discount: (state, amount) => {
+                                state.discount = amount
+                            }
+                        },
+
+                        actions: {
+                            // Пример действия
+                            // dispatch и commit ограничены данным модулем
+                            // они принимают опцию `root` для вызова в глобальном пространстве имён
+                            /* someAction ({ dispatch, commit, getters, rootGetters }) {
+                                getters.someGetter // -> 'hdr/someGetter'
+                                rootGetters.someGetter // -> 'someGetter'
+
+                                dispatch('someOtherAction') // -> 'hdr/someOtherAction'
+                                dispatch('someOtherAction', null, { root: true }) // -> 'someOtherAction'
+
+                                commit('someMutation') // -> 'hdr/someMutation'
+                                commit('someMutation', null, { root: true }) // -> 'someMutation'
+                            }, */
+
+                            cartAction({dispatch, commit, getters, state, rootState}, {act, itemdata, amount, id, order_id,  itemid}) {
+                                return new Promise((resolve, reject) => {
+                                    let data = {
+                                        "fork": {"module": "Ecom", "action": act, "id": id}
+                                    }
+
+                                    if (typeof itemdata == 'object') data.id = itemdata.id
+                                    if (itemid !== undefined) data.id = itemid
+                                    if (amount !== undefined) data.amount = amount
+                                    if (order_id !== undefined) data.order_id = order_id
+                                    if (typeof itemdata == 'object') data.demand_id = itemdata.demand_id;
+                                    if (act == 'ClearCart') data.clear = true
+
+
+                                    $.ajax({
+                                        url: rootState.ajaxURL,
+                                        type: "POST",
+                                        data: data
+                                    }).done(function (resp) {
+                                        if (resp.success) {
+
+                                            if (resp.order_id) {
+                                                Vue.set(state, 'orderId' , resp.order_id);
+                                            }
+                                            if (act == 'RemFromCart') commit('rem_selected_prod', itemdata.id)
+                                            else if (act == 'UpdateCart') commit('set_selected_prod', {
+                                                id: itemdata.id,
+                                                amount: resp.amount
+                                            })
+                                            else if (act == 'ClearCart') commit('clear_cart')
+                                            else if (act == 'AddToCart') commit('add_selected_prod', {
+                                                id: itemdata.id, data: {
+                                                    item: itemdata,
+                                                    amount: resp.amount
+                                                }
+                                            })
+                                        }
+                                        else {
+                                            Snotify.error('Ошибка связи с сервером', snotify_defaults);
+                                        }
+                                        resolve()
+                                    });
+                                })
+                            },
+                        }
+
+                    });
+                    /* END - Хранение данных корзины */
+
+                    $(function () {
+
+                        if (hdr_data) {
+
+                            amelia_store.state.hdr = {
+                                "selectedItems": hdr_data.cart_items || {},
+                                "favorites": hdr_data.favorites || [],
+                                "discount": hdr_data.discount,
+                                "orderId":hdr_data.order_id,
+                            };
+
+                            Vue.component('hdr-cart-item', {
+                                template: '#hdr-cart-item_tpl',
+                                delimiters: ['[[', ']]'],
+                                props: {
+                                    itemdata: Object,
+                                    amount: Number
+                                },
+                                computed: {
+                                    sum() {
+                                        let price = parseFloat(this.itemdata.price)
+                                        price = isNaN(price) ? 0 : price
+                                        return !!(this.amount % 1) ? Math.round((price * this.amount / this.itemdata.step) * 10) / 10 : price * this.amount
+                                    }
+                                },
+                                methods: {
+                                    remFromCart(e) {
+                                        this.$store.dispatch('hdr/cartAction', {act: 'RemFromCart', itemdata: this.itemdata})
+
+                                    },
+                                }
+                            });
+
+                            new Vue({
+                                el: '#hdr-user-block',
+                                delimiters: ['[[', ']]'],
+                                store: amelia_store,
+                                data: {
+                                    isLoading: true,
+                                },
+                                computed: {
+                                    ...Vuex.mapGetters('hdr', {
+                                        cart_sum: "selectedSum",
+                                        cart_amount: "selectedAmount",
+                                        orderId: "getOrder",
+                                    }),
+                                    ...Vuex.mapState('hdr', {
+                                        cart_items: state => Object.values(state.selectedItems),
+                                        cart_items_length: state => Object.keys(state.selectedItems).length,
+                                    })
+                                },
+                                mounted() {
+                                    this.isLoading = false
+
+                                    $('#cart-trigger').hcSticky({
+                                        stickTo: '#page',
+                                        top: 0
+                                    });
+                                },
+                            })
+                        }
+                    });
+                </script>
+
+                <script>
+                    let hdr_data = {
+                        discount: 0,
+                        favorites: ['id01', 'id07'],
+                        order_id: 'gfhsf54243',
+                        // Соответствие  id_товара: {	количество, данные	}
+                        cart_items: {
+                            "id02": {
+                                "amount": 10,
+                                "item": {
+                                    "id": "id02",
+                                    "link": "item.html",
+                                    "demand_id": "demand_id02hsfgh",
+                                    "title": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                                    "total": 10,
+                                    "price": 6222,
+                                    "discount": "",
+                                    "step": 1,
+                                    "weight": 0.2,
+                                    "img": "",
+                                    "imgAlt": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                                    "favorite": true,
+                                    "rating": 130,
+                                    "prod_date": "2020-08-01T00:00:00.000Z",
+                                    "specs": [
+                                        {"term": "Бренд", "def": "365 дней"},
+                                        {"term": "Упаковка", "def": "100 штук"},
+                                        {"term": "Страна производителя", "def": "Россия"},
+                                        {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                                    ]
+                                },
+                            },
+                            "id04": {
+                                "amount": 4,
+                                "item": {
+                                    "id": "id04",
+                                    "link": "item.html",
+                                    "title": "Палочки ватные ЛЕНТА стакан круглый, Россия, 200 шт ",
+                                    "total": 100,
+                                    "price": 17,
+                                    "discount": "",
+                                    "demand_id": "demand_id02hsfgh",
+                                    "step": 1,
+                                    "weight": 0.3,
+                                    "img": "static/img/content/catalog/cat-item-04.jpg",
+                                    "imgAlt": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                                    "favorite": false,
+                                    "rating": 100,
+                                    "prod_date": "2020-07-01T00:00:00.000Z",
+                                    "specs": [
+                                        {"term": "Бренд", "def": "365 дней"},
+                                        {"term": "Упаковка", "def": "100 штук"},
+                                        {"term": "Страна производителя", "def": "Россия"},
+                                        {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                                    ]
+                                },
+                            }
+                        }
+                    };
+                </script>
+
+
+            </header>
+
+            <div class="container-fluid" role="search">
+                <form class="page-hdr_search form-row" id="page-hdr_search">
+                    <h3 class="text-primary col-auto mr-3 mr-lg-4 d-none d-md-block">Поиск по каталогу</h3>
+                    <div class="col">
+                        <input type="search" class="form-control form-control-lg" placeholder="Например: Ватные палочки">
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-lg btn-info d-none d-sm-inline-block">Найти</button>
+                    </div>
+                </form>
+            </div>
+
+            <main class="page_main">
+                <div class="container-fluid">
+
+                    <div class="cat-layout my-6" id="catalog">
+                        <h1 class="cat-list_hdr h2 d-lg-none" v-html="oidTitle || 'Каталог'"></h1>
+
+                        <aside class="cat-aside" id="catalog-sidebar" ref="catalogSidebar">
+
+                            <div class="cat-aside_block">
+                                <h2 class="cat-aside_block-hdr">
+                            <a role="button" data-toggle="collapse" href="#catalog-nav" aria-expanded="false"
+                               aria-controls="catalog-nav">
+                                <i class="fal fa-stream mr-3 d-lg-none"></i><span>Разделы</span>
+                            </a>
+                        </h2>
+                                <nav class="cat-aside_block-inner cat-nav collapse" :class="{'show': !$store.state.mobileMode}" id="catalog-nav">
+                                    <div class="cat-aside_block-close">
+                                        <a role="button" data-toggle="collapse" href="#catalog-nav" aria-expanded="false" aria-controls="catalog-nav" class="fal fa-times-circle"></a>
+                                    </div>
+
+                                    <subnav :tree="chapters" @click="loadCategory"></subnav>
+
+                                </nav>
+                            </div>
+
+                            <div class="cat-aside_block">
+                                <h2 class="cat-aside_block-hdr">
+                            <a role="button" data-toggle="collapse" href="#catalog-filters" aria-expanded="true"
+                               aria-controls="catalog-filters">
+                                <i class="fal fa-filter mr-2 d-lg-none"></i><span>Фильтры</span><b
+                                class="badge badge-danger" v-text="activeFiltersCount"></b>
+                            </a>
+                        </h2>
+
+                                <div class="cat-aside_block-inner cat-filters collapse" :class="{'show': !$store.state.mobileMode}" id="catalog-filters">
+                                    <div class="cat-aside_block-close">
+                                        <a role="button" data-toggle="collapse" href="#catalog-filters" aria-expanded="false" aria-controls="catalog-filters" class="fal fa-times-circle"></a>
+                                    </div>
+
+                                    <div v-for="(f, fname) in fData" :key="fname">
+
+                                        <!-- START - Список чекбоксов -->
+                                        <div v-if="f.type == 'controls-list'" class="my-6">
+                                            <h3 class="mb-3 text-body" v-if="f.title" v-html="f.title+':'"></h3>
+                                            <div class="multiselect-box">
+                                                <div is="scrollbars" class="multiselect-box_inner" :options="{
+															overflowBehavior : {
+																x : 'hidden',
+																y : 'scroll'
+															},
+															scrollbars : {
+																clickScrolling: true
+															}
+														}">
+                                                    <div v-for="(item, itemname) in f.items" :is="item.type" :key="itemname" v-model="filters[fname][itemname]" :fdata="item"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- END - Список чекбоксов -->
+
+                                        <!-- START - Комбинированный фильтр по цене -->
+                                        <div v-else-if="f.type == 'prices'" class="my-6">
+                                            <h3 class="mb-4 text-body" v-html="f.title+':'"></h3>
+
+                                            <component :is="f.elems.currency.type" :fdata="f.elems.currency" v-model="filters[fname].currency">
+                                            </component>
+
+                                            <component :is="f.elems.price_name.type" v-if="filters[fname].currency" :fdata="f.elems.price_name" :fparams="{ options: filters[fname].currency.value }" v-model="filters[fname].price_name">
+                                            </component>
+
+                                            <component is="range-slider" v-if="filters[fname].price_name" v-model="filters[fname].price_range" :fdata="f.elems.price_range" :fparams="{ min: filters[fname].price_name.min, max: filters[fname].price_name.max }">
+                                            </component>
+
+                                        </div>
+                                        <!-- END - Комбинированный фильтр по цене -->
+
+                                        <!-- START - Комбинированный фильтр по наличию на складе -->
+                                        <div v-else-if="f.type == 'stocks'" class="my-6">
+                                            <h3 class="mb-4 text-body" v-html="f.title+':'"></h3>
+
+                                            <component :is="f.elems.store.type" :fdata="f.elems.store" v-model="filters[fname].store">
+                                            </component>
+
+                                            <component is="range-slider" v-if="filters[fname].store" v-model="filters[fname].quant_range" :fdata="f.elems.quant_range" :fparams="{ min: filters[fname].store.min, max: filters[fname].store.max }">
+                                            </component>
+
+                                        </div>
+                                        <!-- END - Комбинированный фильтр по наличию на складе -->
+
+                                        <!-- Всё остальное -->
+                                        <div v-else :is="f.type" :fdata="f" v-model="filters[fname]"></div>
+
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <button class="btn btn-lg btn-info mr-3 mb-2" @click="applyFilters">Применить</button>
+                                        <button class="btn btn-lg btn-outline-pink mb-2" @click="resetFilters">Сбросить</button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </aside>
+
+                        <div class="cat-main">
+                            <div class="cat-list_ctrl-panel row">
+                                <h1 class="cat-list_hdr h2 col-lg-auto d-none d-lg-block" v-html="oidTitle || 'Каталог'"></h1>
+
+                                <div class="cat-list_controls col-lg-auto">
+                                    <div is="multiselect" class="form-multiselect" v-model="listSort" label="text" track-by="text" :options="listSortOpts" :searchable="false" :show-labels="false" :allow-empty="false" :hide-selected="true" @select="loadItems">
+                                    </div>
+
+                                    <div class="cat-list_view btn-group btn-group-toggle">
+                                        <label for="cat-list-views_list" class="btn" :class="{'active': catView == 'list'}" title="Показать списком">
+                                            <input type="radio" name="cat-list-views" value="list" v-model="catView" checked id="cat-list-views_list">
+                                            <svg class="svg-icon" width="23" height="23">
+                                                <use xlink:href="#list-1" />
+                                            </svg>
+                                        </label>
+                                        <label for="cat-list-views_blocks" class="btn" :class="{'active': catView == 'blocks'}" title="Показать карточками">
+                                            <input type="radio" name="cat-list-views" value="blocks" v-model="catView" id="cat-list-views_blocks">
+                                            <svg class="svg-icon" width="23" height="23">
+                                                <use xlink:href="#blocks" />
+                                            </svg>
+                                        </label>
+                                        <label for="cat-list-views_compact" class="btn" :class="{'active': catView == 'compact'}" title="Компактный вид">
+                                            <input type="radio" name="cat-list-views" value="compact" v-model="catView" id="cat-list-views_compact">
+                                            <svg class="svg-icon" width="23" height="23">
+                                                <use xlink:href="#list-2" />
+                                            </svg>
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="cat-list" :class="'cat-list_'+catView" id="catalog-list">
+
+                                <transition-group tag="div" :name="'list-mode_'+catView" class="cat-list_inner" appear>
+                                    <component :is="'cat-item_'+catView" :itemdata="item" v-for="item in cat_items_sorted" :key="item.id" :class="'cat-item_'+catView"></component>
+                                </transition-group>
+
+                            </div>
+
+                            <nav class="cat_pager my-7" v-if="pagesTotal > 1">
+                                <ul class="pagination my-7">
+                                    <li class="page-item" v-if="currPage !== 1">
+                                        <a class="page-link" href="#" @click.prevent="ch_page('prev')"><i
+                                    class="fal fa-chevron-left"></i></a>
+                                    </li>
+                                    <template v-if="typeof pages == 'number'">
+                                        <template v-for="page in pages">
+                                            <li :class="[page == currPage ? 'active' : '', 'page-item']" v-if="page == currPage" aria-current="page">
+                                                <a class="page-link" href="#" @click.prevent="ch_page(page, $event)">[[page]]<span class="sr-only">Текущая страница</span></a>
+                                            </li>
+                                            <li class="page-item" v-else>
+                                                <a class="page-link" href="#" @click.prevent="ch_page(page, $event)">[[page]]</a>
+                                            </li>
+                                        </template>
+                                    </template>
+                                    <template v-else>
+                                        <template v-for="page in pages">
+                                            <li v-if="typeof page == 'string'" class="page-item">
+                                                <span class="page-link px-1 px-lg-4">[[page]]</span>
+                                            </li>
+                                            <li v-else-if="typeof page == 'number' && page == currPage" :class="[page == currPage ? 'active' : '', 'page-item']" aria-current="page">
+                                                <a class="page-link" href="#" @click.prevent="ch_page(page, $event)">[[page]]<span class="sr-only">Текущая страница</span></a>
+                                            </li>
+                                            <li class="page-item" v-else>
+                                                <a class="page-link" href="#" @click.prevent="ch_page(page, $event)">[[page]]</a>
+                                            </li>
+                                        </template>
+                                    </template>
+                                    <li class="page-item" v-if="currPage !== pagesTotal">
+                                        <a class="page-link" href="#" @click.prevent="ch_page('next')"><i
+                                    class="fal fa-chevron-right"></i></a>
+                                    </li>
+                                </ul>
+
+                            </nav>
+
+                            <div class="cat_spinner" v-if="isLoading || catListRequestProceed">
+                                <div class="spinner-border text-info" role="status">
+                                    <span class="sr-only">Загрузка...</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+            <div class="page_footer" role="contentinfo">
+                <div class="container-fluid">
+                    <div class="page_footer_inner">
+                        <a class="navbar-brand" href="/" title="На главную страницу">
+                            <img src="static/img/general/logo.svg" width="138" height="93" alt="Амелия &mdash; Забота о каждом">
+                        </a>
+
+                        <div class="page-footer_main">
+                            <nav class="page-footer_nav">
+                                <a href="#" class="nav-link"><span>Помощь</span></a>
+                                <a href="#" class="nav-link"><span>Условия сотрудничества</span></a>
+                                <a href="#" class="nav-link"><span>Оферта</span></a>
+                                <a href="#" class="nav-link"><span>Новости</span></a>
+                            </nav>
+
+                            <div class="page-footer_social">
+                                <a href="#" title="Мы ВКонтакте" class="fab fa-vk"></a>
+                                <a href="#" title="Мы на Facebook" class="fab fa-facebook-f"></a>
+                                <a href="#" title="Мы в Twitter" class="fab fa-twitter"></a>
+                                <a href="#" title="Мы в Instagram" class="fab fa-instagram"></a>
+                            </div>
+                        </div>
+
+                        <div class="page-footer_main align-content-sm-end">
+                            <p>&copy; 2020 Amelia</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <script>
+                Vue.component('subnav', {
+                    props: {
+                        tree: Object,
+                        parent: String
+                    },
+                    render(h) {
+                        return this.createSubNav(this.tree, h);
+                    },
+                    methods: {
+                        createSubNav(subtree, h) {
+                            let vm = this;
+
+                            return h('ul', {
+                                    class: {'nav': true},
+                                },
+
+                                Object.values(subtree).map(branch => {
+                                    let subElements = [];
+                                    let classShow = branch.class;
+                                   // console.log(classShow);
+                                    if (branch.hasOwnProperty('subtree')) {
+                                        subElements.push(
+                                            h('a', {
+                                                class: [{'nav-link': true}, classShow ],
+                                                attrs: {
+                                                    href: '#' + branch.oid,
+                                                    role: "button",
+                                                    'data-toggle': 'collapse',
+                                                    'aria-expanded': 'false',
+                                                    'aria-controls': branch.oid,
+                                                },
+                                                on: {
+                                                    click(e) {
+                                                        vm.$emit('click', e)
+                                                    }
+                                                }
+                                            }, branch.text)
+                                        );
+                                        subElements.push(
+                                            h('div', {
+                                                    class: [{'collapse': true}, classShow ],
+                                                    attrs: {id: branch.oid}
+                                                },
+                                                [
+                                                    vm.createSubNav(branch.subtree, h, branch.oid)
+                                                ]
+                                            )
+                                        );
+                                    }
+                                    else {
+                                        subElements.push(
+                                            h('a', {
+                                                class: [{'nav-link': true}, classShow ],
+                                                attrs: {
+                                                    href: '#' + branch.oid
+                                                },
+                                                on: {
+                                                    click(e) {
+                                                        vm.$emit('click', e)
+                                                    }
+                                                }
+                                            }, branch.text)
+                                        )
+                                    }
+
+                                    return h('li', {class: [{'nav-item': true}, classShow ]}, subElements)
+                                })
+                            );
+                        }
+                    },
+                });
+            </script>
+
+            <script>
+                Vue.component('subnavcat', {
+                    props: {
+                        tree: Object,
+                        parent: String
+                    },
+                    render (h) {
+                        return this.createSubNav(this.tree, h)
+                    },
+                    methods: {
+                        createSubNav (subtree, h) {
+                            let vm = this
+
+                            return h('ul', {
+                                    class: {'nav': true},
+                                },
+
+                                Object.values(subtree).map(branch => {
+                                    let subElements = []
+                                    let classShow = branch.class
+                                    // console.log(classShow);
+
+                                        if (branch.hasOwnProperty('subtree')) {
+                                        subElements.push(
+                                            h('a', {
+                                                class: [{'nav-link': true}, classShow],
+                                                attrs: {
+                                                    href: '#' + branch.oid,
+                                                    role: 'button',
+                                                    'data-toggle': 'collapse',
+                                                    'aria-expanded': 'false',
+                                                    'data-target': '#cat-' + branch.oid,
+                                                    'aria-controls': '#cat-' + branch.oid,
+                                                },
+                                                on: {
+                                                    mouseover(event) {
+                                                        let catId = branch.oid
+                                                        vm.$emit('mouseover', catId)
+                                                    },
+                                                    click(e) {
+                                                        let catId = branch.oid
+                                                        console.log('catId', catId)
+                                                        vm.$emit('click', catId)
+                                                    }
+                                                }
+                                            }, branch.text)
+                                        )
+                                        if (window.screen.width < 992) {
+                                            // console.log('width', window.screen.width)
+                                            subElements.push(
+                                                h('div', {
+                                                        class: [{'collapse': true}, {'collapsed': true},classShow],
+                                                        attrs: {id: 'cat-' + branch.oid}
+                                                    },
+                                                    [
+                                                        vm.createSubNav(branch.subtree, h, branch.oid)
+                                                    ]
+                                                )
+                                            )
+                                        }
+
+                                        }
+                                        else {
+                                            subElements.push(
+                                                h('a', {
+                                                    class: [{'nav-link': true}, {'collapsed': true}, classShow],
+                                                    attrs: {
+                                                        href: '#' + branch.oid
+                                                    },
+                                                    on: {
+                                                    mouseover(event) {
+                                                        let catId = branch.oid
+                                                        vm.$emit('mouseover', catId)
+                                                    },
+                                                    click(e) {
+                                                        let catId = branch.oid
+                                                        console.log('catId', catId)
+                                                        vm.$emit('click', catId)
+                                                    }
+                                                }
+                                                }, branch.text)
+                                            )
+
+                                        }
+
+                                    return h('li', {class: [{'nav-item': true}, classShow]}, subElements)
+                                })
+                            )
+                        }
+                    },
+                })
+            </script>
+
+
+
+            <!-- START - Шаблоны фильтров каталога -->
+
+            <!-- START - Шаблон слайдера диапазона -->
+            <script type="text/x-template" id="cat-filters_slider-tpl">
+                <div class="my-3">
+                    <h4 class="mb-2 text-body" v-html="ftitle == fdata.title ? '' : fdata.title+':'"></h4>
+                    <div class="form-range">
+                        <div is="vue-slider"
+                             role="slider"
+                             class="form-range_slider"
+                             :value="value"
+                             :min="min"
+                             :max="max"
+                             tooltip="none"
+                             :dot-size="22"
+                             :height="2"
+                             @change="emitRange"
+                        ></div>
+                        <div class="form-range_slider-fields my-2">
+                            от<input type="number" class="form-range_min form-control" :value.number="value[0]" :aria-valuemin="min"
+                                     :min="min" :max="value[1]" @input="emitVal"/>до<input type="number"
+                                                                                           class="form-range_max form-control"
+                                                                                           :value.number="value[1]"
+                                                                                           :aria-valuemax="max" :min="value[0]"
+                                                                                           :max="max" @input="emitVal"/>
+                            ₽
+                        </div>
+                    </div>
+                </div>
+            </script>
+
+            <script>
+                Vue.component('range-slider', {
+                    template: '#cat-filters_slider-tpl',
+                    props: {
+                        value: Array,
+                        fdata: Object,
+                        ftitle: String,
+                        fparams: {
+                            type: Object,
+                            default() {
+                                return {}
+                            }
+                        }
+                    },
+                    computed: {
+                        min() {
+                            return this.fparams.min || this.fdata.data[0]
+                        },
+                        max() {
+                            return this.fparams.max || this.fdata.data[1]
+                        },
+                    },
+                    methods: {
+                        emitRange(range) {
+                            this.$emit('input', range)
+                        },
+                        emitVal(e) {
+                            let v = parseFloat(e.target.value);
+                            if (e.target.matches('[aria-valuemin]')) {
+                                if (v >= this.min && v <= this.value[1]) this.$emit('input', [e.target.value, this.value[1]])
+                            } else if (e.target.matches('[aria-valuemax]')) {
+                                if (v <= this.max && v >= this.value[0]) this.$emit('input', [this.value[0], e.target.value])
+                            }
+                        }
+                    },
+                    created() {
+                        if (!this.value.length) this.$emit('input', [this.min, this.max])
+                    },
+                    watch: {
+                        'fparams.min': function (newMin) {
+                            if (newMin >= this.value[0]) this.$emit('input', [newMin, this.value[1]])
+                        },
+                        'fparams.max': function (newMax) {
+                            if (newMax <= this.value[1]) this.$emit('input', [this.value[0], newMax])
+                        },
+                    }
+                })
+            </script>
+            <!-- END - Шаблон слайдера диапазона -->
+
+            <!-- START - Шаблон чекбокса -->
+            <script type="text/x-template" id="cat-filters_chbox-tpl">
+                <div class="custom-control custom-checkbox my-2">
+                    <input type="checkbox" class="custom-control-input" :id="fdata.name"
+                           v-model="localVal" :name="fdata.name" @change="emitValue">
+                    <label class="custom-control-label" :for="fdata.name" v-html="fdata.title + ' (' + fdata.amount + ')'"></label>
+                </div>
+            </script>
+
+            <script>
+                Vue.component('chbox', {
+                    template: '#cat-filters_chbox-tpl',
+                    delimiters: ['[[', ']]'],
+                    props: {
+                        fdata: Object,
+                        ftitle: String,
+                        value: Boolean
+                    },
+                    data() {
+                        return {localVal: this.value}
+                    },
+                    methods: {
+                        emitValue() {
+                            setTimeout(() => {
+                                this.$emit('input', this.localVal)
+                            }, 1)
+                        }
+                    },
+                    watch: {
+                        value(newV, oldV) {
+                            this.localVal = newV;
+                        }
+                    }
+                })
+            </script>
+            <!-- END - Шаблон чекбокса -->
+
+            <!-- START - Шаблон переключателей -->
+            <script type="text/x-template" id="cat-filters_radiobox-tpl">
+                <div class="custom-control custom-radio mr-2 mb-2">
+                    <input type="radio" class="custom-control-input" :id="fdata.name"
+                           :name="fdata.nameParent" :value="fdata.name" v-model="localVal" @input="emitValue">
+                    <label class="custom-control-label" :for="fdata.name" v-html="fdata.title"></label>
+                </div>
+            </script>
+
+            <script>
+                Vue.component('radio', {
+                    template: '#cat-filters_radiobox-tpl',
+                    props: {
+                        fdata: Object,
+                        ftitle: String,
+                        value: String
+                    },
+
+                    data() {
+                        return {localVal: this.value}
+                    },
+
+                    methods: {
+                        emitValue() {
+                            this.$root.resetRadio();
+                            setTimeout(() => {
+                                this.$emit('input', this.localVal)
+                            }, 1)
+                        }
+                    },
+                    watch: {
+                        value(newV, oldV) {
+                            this.localVal = newV;
+                        }
+                    }
+                })
+            </script>
+            <!-- END - Шаблон переключателей -->
+
+            <!-- START - Шаблон элемента выбора Да - Нет -->
+            <script type="text/x-template" id="cat-filters_yn-box-tpl">
+                <div class="my-2">
+                    <div class="form-row align-items-baseline">
+                        <h4 class="col-6 text-body mb-0" v-html="fdata.title+':'"></h4>
+                        <div class="col-6 form-inline">
+                            <div class="custom-control custom-radio mr-4">
+                                <input type="radio" class="custom-control-input" :id="fdata.name+'yes'"
+                                       :name="fdata.name" value="yes" v-model="value"
+                                       @input="$emit('input', $event.target.value)">
+                                <label class="custom-control-label" :for="fdata.name+'yes'">Да</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" :id="fdata.name+'no'"
+                                       :name="fdata.name" value="no" v-model="value"
+                                       @input="$emit('input', $event.target.value)">
+                                <label class="custom-control-label" :for="fdata.name+'no'">Нет</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </script>
+
+            <script>
+                Vue.component('yn-box', {
+                    template: '#cat-filters_yn-box-tpl',
+                    props: {
+                        fdata: Object,
+                        ftitle: String,
+                        value: String
+                    }
+                })
+            </script>
+            <!-- END - Шаблон элемента выбора Да - Нет -->
+
+
+            <!-- START - Шаблон селекта -->
+            <script type="text/x-template" id="cat-filters_select-tpl">
+                <div class="form-group mb-4">
+                    <p v-html="fparams.options.length"></p>
+                    <h4 class="mb-2 text-body" v-html="ftitle == fdata.title ? '' : fdata.title+':'"></h4>
+                    <div is="multiselect"
+                         class="form-multiselect form-multiselect-lg"
+                         :value="value"
+                         :options="fparams.options ? fdata.data[fparams.options] : fdata.data"
+                         label="text"
+                         track-by="value"
+                         :show-labels="false"
+                         :placeholder="fdata.placeholder || 'Выберите из списка'"
+                         @input="$emit('input', $event)">
+                        <template slot="noResult">Нет результатов</template>
+                    </div>
+                </div>
+            </script>
+
+            <script>
+                Vue.component('listbox', {
+                    delimiters: ['[[', ']]'],
+                    template: '#cat-filters_select-tpl',
+                    props: {
+                        value: Object,
+                        ftitle: String,
+                        fdata: Object,
+                        fparams: {
+                            type: Object,
+                            default() {
+                                return {}
+                            }
+                        }
+                    }
+                })
+            </script>
+            <!-- END - Шаблон селекта -->
+
+            <!-- START - Шаблон мультиселекта -->
+            <script type="text/x-template" id="cat-filters_multiselect-tpl">
+                <div class="mb-4">
+                    <h4 class="mb-2 text-body" v-html="ftitle == fdata.title ? '' : fdata.title+':'"></h4>
+                    <div is="multiselect"
+                         class="form-multiselect form-multiselect-lg"
+                         :value="value"
+                         :options="fparams.options ? fdata.data[fparams.options] : fdata.data"
+                         label="text"
+                         track-by="value"
+                         :multiple="true"
+                         :close-on-select="false"
+                         :show-labels="false"
+                         :placeholder="fdata.placeholder || 'Выберите из списка'"
+                         @input="$emit('input', $event)">
+                        <template slot="noResult">Нет результатов</template>
+                    </div>
+                </div>
+            </script>
+
+            <script>
+                Vue.component('combobox', {
+                    delimiters: ['[[', ']]'],
+                    template: '#cat-filters_multiselect-tpl',
+                    props: {
+                        value: Array,
+                        ftitle: String,
+                        fdata: Object,
+                        fparams: {
+                            type: Object,
+                            default() {
+                                return {}
+                            }
+                        }
+                    },
+                    computed: {
+                        paramsCount() {
+                            if (this.fparams.options) {
+                                return Object.keys(this.fdata.data[this.fparams.options]).length
+                            } else {
+                                return Object.keys(this.fdata.data).length
+                            }
+                        }
+                    }
+                })
+            </script>
+            <!-- END - Шаблон мультиселекта -->
+
+            <!-- END - Шаблоны фильтров каталога -->
+
+            <!-- START - Шаблоны карточки товара -->
+
+            <!-- START - Вид списком -->
+            <script type="text/x-template" id="cat-item_list_tpl">
+                <article class="cat-item cat-item_list">
+                    <figure class="cat-item_img">
+                        <a :href="itemdata.link" title="На страницу товара">
+                            <img :src="itemdata.img" class="img-fluid" :alt="itemdata.imgAlt" v-if="itemdata.img">
+                            <img src="static/img/general/item-photo.png" class="img-fluid"
+                                 v-if="itemdata.img == ''">
+                        </a>
+                    </figure>
+                    <div class="cat-item_descr">
+                        <h4 class="cat-item_hdr mb-4">
+                            <a :href="itemdata.link" v-html="itemdata.title"></a>
+                        </h4>
+                        <dl class="cat-item_specs">
+                            <template v-for="spec in itemdata.specs">
+                                <dt v-html="spec.term+':'"></dt>
+                                <dd v-html="spec.def+':'"></dd>
+                            </template>
+                        </dl>
+                    </div>
+                    <div class="cat-item_right">
+                        <a href="#" role="button"
+                           class="cat-item_fav far fa-lg fa-heart"
+                           :class="{'active': isInFav}"
+                           @click.prevent="toggleFav"
+                           :title="isInFav ? 'Убрать из избранного' : 'В избранное'"></a>
+                        <p class="flex-fill d-none d-md-block">&nbsp;</p>
+
+                        <p class="cat-item_price">[[itemdata.price]]&nbsp;руб.</p>
+
+                        <div class="cat-item_order">
+                            <div class="cat-item_counter mb-2" aria-label="Выбрано">
+                                <input type="text" class="form-control"
+                                       min="0" :step="itemdata.step" :max="itemdata.total"
+                                       :value="selectedCount"
+                                       @input="checkNumber"
+                                       @keydown.enter="checkNumber">
+                                <i class="fal fa-sm fa-chevron-up" @mousedown="increase"></i>
+                                <i class="fal fa-sm fa-chevron-down" @mousedown="decrease"></i>
+                            </div>
+                            <!--<button class="btn btn-success ml-2 mb-2" @click="addToCart">
+                                <span v-if="isInCart">Изменить кол-во</span>
+                                <span v-else>В&nbsp;корзину</span>
+                            </button>-->
+
+
+                            <div class="btn-group lk-order-btns ml-2 mb-2">
+                                <div class="btn-group dropleft" role="group">
+                                    <button type="button"
+                                            class="btn btn-success dropdown-toggle dropdown-toggle-split"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <div class="order-content-wrapper_inner">
+                                            <a class="dropdown-item" href="#">Заказ №5636</a>
+                                            <a class="dropdown-item" href="#">Название заказа</a>
+                                            <a class="dropdown-item" href="#">Заказ №256368</a>
+                                            <a class="dropdown-item" href="#">Заказ №5636</a>
+                                            <a class="dropdown-item" href="#">Название заказа</a>
+                                            <a class="dropdown-item" href="#">Заказ №256368</a>
+                                            <a class="dropdown-item" href="#">Заказ №5636</a>
+                                            <a class="dropdown-item" href="#">Название заказа</a>
+                                            <a class="dropdown-item" href="#">Заказ №256368</a>
+                                            <a class="dropdown-item" href="#">Заказ №5636</a>
+                                            <a class="dropdown-item" href="#">Название заказа</a>
+                                            <a class="dropdown-item" href="#">Заказ №256368</a>
+                                            <a class="dropdown-item" href="#">Заказ №5636</a>
+                                            <a class="dropdown-item" href="#">Название заказа</a>
+                                            <a class="dropdown-item" href="#">Заказ №256368</a>
+                                            <a class="dropdown-item" href="#">Заказ №5636</a>
+                                            <a class="dropdown-item" href="#">Название заказа</a>
+                                            <a class="dropdown-item" href="#">Заказ №256368</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm text-nowrap">
+                                    В корзину
+                                </button>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </article>
+            </script>
+            <!-- END - Вид списком -->
+
+
+            <!-- START - Вид таблицей -->
+            <script type="text/x-template" id="cat-item_compact_tpl">
+                <article class="cat-item cat-item_compact">
+                    <figure class="cat-item_img mb-2">
+                        <a :href="itemdata.link" title="На страницу товара">
+                            <img :src="itemdata.img" class="img-fluid" :alt="itemdata.imgAlt" v-if="itemdata.img">
+                            <img src="static/img/general/item-photo.png" class="img-fluid"
+                                 v-if="itemdata.img == ''">
+                        </a>
+                    </figure>
+                    <h4 class="cat-item_hdr mb-md-2">
+                        <a :href="itemdata.link" v-html="itemdata.title"></a>
+                    </h4>
+                    <p class="cat-item_price mb-md-2">[[itemdata.price]]&nbsp;руб.</p>
+
+                    <div class="cat-item_order">
+                        <div class="cat-item_counter mb-2 mr-2" aria-label="Выбрано">
+                            <input type="text" class="form-control"
+                                   min="0" :step="itemdata.step" :max="itemdata.total"
+                                   :value="selectedCount"
+                                   @input="checkNumber"
+                                   @keydown.enter="checkNumber">
+                            <i class="fal fa-sm fa-chevron-up" @mousedown="increase"></i>
+                            <i class="fal fa-sm fa-chevron-down" @mousedown="decrease"></i>
+                        </div>
+                        <button class="btn btn-success mb-2" @click="addToCart">
+                            <span v-if="isInCart">Изменить кол-во</span>
+                            <span v-else>В&nbsp;корзину</span>
+                        </button>
+                    </div>
+                    <a href="#" role="button"
+                       class="cat-item_fav far fa-lg fa-heart mb-md-2"
+                       :class="{'active': isInFav}"
+                       @click.prevent="toggleFav"
+                       :title="isInFav ? 'Убрать из избранного' : 'В избранное'"
+                       v-html="isInFav ? '&ensp;<span>Убрать из<br>избранного</span>' : '&ensp;<span>В избранное</span>'"></a>
+
+                </article>
+            </script>
+            <!-- END - Вид таблицей -->
+
+
+            <!-- START - Вид карточками -->
+            <script type="text/x-template" id="cat-item_blocks_tpl">
+                <article class="cat-item cat-item_blocks">
+                    <figure class="cat-item_img">
+                        <a :href="itemdata.link" title="На страницу товара">
+                            <img :src="itemdata.img" class="img-fluid" :alt="itemdata.imgAlt" v-if="itemdata.img">
+                            <img src="static/img/general/item-photo.png" class="img-fluid"
+                                 v-if="itemdata.img == ''">
+                        </a>
+                    </figure>
+                    <h4 class="cat-item_hdr">
+                        <a :href="itemdata.link" v-html="itemdata.title"></a>
+                    </h4>
+
+                    <div class="cat-item_bottom">
+                        <p class="cat-item_price mb-4 mr-4">[[itemdata.price]]&nbsp;руб.</p>
+
+                        <div class="cat-item_order mb-4">
+                            <div class="cat-item_counter mr-2" aria-label="Выбрано">
+                                <input type="text" class="form-control"
+                                       min="0" :step="itemdata.step" :max="itemdata.total"
+                                       :value="selectedCount"
+                                       @input="checkNumber"
+                                       @keydown.enter="checkNumber">
+                                <i class="fal fa-sm fa-chevron-up" @mousedown="handleCounter('up', $event)"
+                                   @mouseup="freezeValue"></i>
+                                <i class="fal fa-sm fa-chevron-down" @mousedown="handleCounter('down', $event)"
+                                   @mouseup="freezeValue"></i>
+                            </div>
+                            <button v-if="isInCart" class="btn btn-success fal fa-money-check-edit" @click="updateCart"
+                                    title="Изменить количество"></button>
+                            <button v-else class="btn btn-success fal fa-shopping-cart" @click="addToCart"
+                                    title="Положить в корзину"></button>
+                        </div>
+                    </div>
+                    <a href="#" role="button"
+                       class="cat-item_fav far fa-lg fa-heart"
+                       :class="{'active': isInFav}"
+                       @click.prevent="toggleFav"
+                       :title="isInFav ? 'Убрать из избранного' : 'В избранное'">
+                    </a>
+                </article>
+            </script>
+            <!-- END - Вид карточками -->
+
+            <!-- START - Вид сжатой таблицей -->
+            <script type="text/x-template" id="cat-item_table_tpl">
+                <article class="cat-item cat-item_table">
+                    <div class="cat-item_code mb-md-2">[[itemdata.code]]</div>
+
+                   <div>
+                       <figure class="cat-item_img mb-2">
+                           <a :href="itemdata.link" title="На страницу товара">
+                               <img :src="itemdata.img" class="img-fluid" :alt="itemdata.imgAlt" v-if="itemdata.img">
+                               <img src="static/img/general/item-photo.png" class="img-fluid"
+                                    v-if="itemdata.img == ''">
+                           </a>
+                       </figure>
+                   </div>
+
+                    <h4 class="cat-item_hdr mb-md-2">
+                        <a :href="itemdata.link" v-html="itemdata.title"></a>
+                    </h4>
+
+                    <p class="cat-item_article mb-md-2">[[itemdata.article]]</p>
+
+                    <p class="cat-item_brand mb-md-2">[[itemdata.brand]]</p>
+
+                    <p class="cat-item_pack mb-md-2">[[itemdata.pack]]&nbsp;шт.</p>
+                    <p class="cat-item_available mb-md-2" v-html="instock"></p>
+
+                    <p class="cat-item_price mb-md-2">[[itemdata.price]]</p>
+
+                    <div class="cat-item_order">
+                        <div class="cat-item_counter mb-2 mr-2" aria-label="Выбрано">
+                            <input type="text" class="form-control px-0"
+                                   min="0" :step="itemdata.step" :max="itemdata.total"
+                                   :value="selectedCount"
+                                   @input="checkNumber"
+                                   @keydown.enter="checkNumber">
+                        </div>
+                        <span>шт.</span>
+                    </div>
+                    <a href="#" role="button"
+                       class="cat-item_add mb-md-2 pl-0"
+                       :class="{'active': isInCart}"
+                       @click.prevent="addToCart"
+                       :title="isInCart ? 'Изменить количество' : 'Положить в корзину'">
+                        <svg class="svg-icon" width="19" height="19">
+                            <use xlink:href="static/img/svg-sprite/svg-symbols.svg#add-cart"/>
+                        </svg>
+                    </a>
+                    <a href="#" role="button"
+                       class="cat-item_fav far fa-lg fa-heart mb-md-2"
+                       :class="{'active': isInFav}"
+                       @click.prevent="toggleFav"
+                       :title="isInFav ? 'Убрать из избранного' : 'В избранное'"></a>
+
+                </article>
+            </script>
+            <!-- END - Вид таблицей -->
+
+            <script type="text/javascript">
+                $(function () {
+
+                    let commonProps = {
+                        delimiters: ['[[', ']]'],
+                        data() {
+                            return {
+                                selectedCount: 1
+                            }
+                        },
+                        computed: {
+                            price() {
+                                return parseFloat(this.itemdata.price);
+                            },
+                            total() {
+                                let tot = parseFloat(this.itemdata.total)
+                                return isNaN(tot) ? Infinity : tot;
+                            },
+                            instock() {
+                                switch (this.itemdata.available) {
+                                    case 1 :
+                                        return '<span class="order">На заказ</span>'
+                                    case 2 :
+                                        return '<span class="available">В наличии</span>'
+                                    default:
+                                        return '<span class="absent">Отсутствует</span>'
+                                }
+                            },
+                            step() {
+                                return parseFloat(this.itemdata.step);
+                            },
+                            isInFav() {
+                                return this.$store.state.hdr.favorites.indexOf(this.itemdata.id) >= 0
+                            },
+                            isInCart() {
+                                return !!this.$store.state.hdr.selectedItems[this.itemdata.id]
+                            },
+                        },
+                        methods: {
+                            decrease() {
+                                if (this.selectedCount > 0) {
+                                    this.selectedCount = Math.round((this.selectedCount - this.step) * 10) / 10;
+                                }
+                            },
+                            increase() {
+                                if (this.selectedCount < this.total) {
+                                    this.selectedCount = Math.round((this.selectedCount + this.step) * 10) / 10;
+                                }
+                            },
+                            handleCounter(dir, e) {
+                                let vm = this
+                                vm.counterActive = true
+
+                                if (dir == "up") vm.increase()
+                                else if (dir == "down") vm.decrease()
+
+                                setTimeout(() => {
+                                    vm.counter = setInterval(() => {
+                                        if (vm.counterActive) {
+                                            if (dir == "up") vm.increase()
+                                            else if (dir == "down") vm.decrease()
+                                        } else clearInterval(vm.counter)
+                                    }, 100)
+                                }, 300);
+                            },
+                            checkNumber(e) {
+                                let val = parseFloat(e.target.value)
+
+                                if (isNaN(val) || 0 > val) {
+                                    this.selectedCount = 0
+                                } else if (val > this.total) {
+                                    this.selectedCount = this.total
+                                } else {
+                                    this.selectedCount = val
+                                }
+                            },
+                            freezeValue() {
+                                this.counterActive = false
+                            },
+                            addToCart(e) {
+                                if (!isNaN(parseFloat(this.selectedCount))) {
+                                    this.$store.dispatch('hdr/cartAction', {
+                                        act: 'AddToCart',
+                                        itemdata: this.itemdata,
+                                        amount: this.selectedCount
+                                    })
+                                }
+                            },
+                            updateCart(e) {
+                                if (!isNaN(parseFloat(this.selectedCount))) {
+                                    this.$store.dispatch('hdr/cartAction', {
+                                        act: 'UpdateCart',
+                                        itemdata: this.itemdata,
+                                        amount: this.selectedCount
+                                    })
+                                }
+                            },
+                            toggleFav(e) {
+                                this.$store.commit('hdr/toggle_fav_prod', this.itemdata.id)
+                                e.target.blur()
+                            },
+                        },
+                    };
+
+                    Vue.component('cat-item_list', {
+                        template: '#cat-item_list_tpl',
+                        props: {
+                            itemdata: Object
+                        },
+                        mixins: [commonProps]
+                    });
+
+                    Vue.component('cat-item_compact', {
+                        template: '#cat-item_compact_tpl',
+                        props: {
+                            itemdata: Object
+                        },
+                        mixins: [commonProps]
+                    })
+
+                    Vue.component('cat-item_blocks', {
+                        template: '#cat-item_blocks_tpl',
+                        props: {
+                            itemdata: Object
+                        },
+                        mixins: [commonProps]
+                    })
+
+                    Vue.component('cat-item_table', {
+                        template: '#cat-item_table_tpl',
+                        props: {
+                            itemdata: Object
+                        },
+                        mixins: [commonProps]
+                    })
+                });
+            </script>
+
+            <!-- END - Шаблоны карточки товара -->
+
+            <script>
+                /* START - Хранение данных каталога */
+                /*
+                    window.onpopstate = function (state) {
+                        console.log(state);
+                    }
+                 */
+                amelia_store.registerModule('catalog', {
+                    namespaced: true,
+
+                    state: {
+                        products: [],
+                        itemsTotal: 0
+                    },
+
+                    getters: {
+                        product: state => id => {
+                            return state.products.find(prod => prod.id == id);
+                        },
+                        itemsTotal: state => {
+                            return state.products.length;
+                        },
+                    },
+
+                    mutations: {
+                        set_products: (state, payload) => {
+                            state.products = payload;
+                        },
+
+                        add_products: (state, payload) => {
+                            state.products.push(payload);
+                        },
+                    },
+
+                    actions: {
+
+                        // Получение списка продуктов
+                        get_products(ctx, data) {
+                            data.fork = {module: 'Ecom', action: 'Catalog'}
+
+                            return window.fetch(ctx.rootState.ajaxURL, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded; charset = UTF-8',
+                                },
+                                body: $.param(data), // data type must match "Content-Type" header
+                            })
+                                .then(fetchHelpers.checkStatus)
+                                .then(fetchHelpers.parseJSON)
+                                .then(function (resp) {
+                                    if (resp.success) {
+                                        ctx.commit('set_products', resp.cat_items);
+                                        ctx.state.itemsTotal = resp.itemsTotal || 0
+
+                                        return resp;
+                                    }
+                                })
+                                .catch(function (error) {
+                                    console.log('request failed', error)
+                                })
+                        },
+                    },
+
+                });
+                /* END - Хранение данных каталога */
+
+                $(function () {
+
+                    if (catalog_data) {
+
+                        amelia_store.state.catalog = {
+                            "products": catalog_data.cat_items || [],
+                            "itemsTotal": catalog_data.itemsTotal || 0,
+                        };
+
+
+                        /* START - каталог */
+
+                        window.catalogObj = new Vue({
+                            el: '#catalog',
+                            delimiters: ['[[', ']]'],
+                            store: amelia_store,
+
+                            data: {
+                                oid: catalog_data.currOID || '',
+                                oidTitle: '',
+                                chapters: {},
+
+                                currPage: 1,
+                                isLoading: true,
+                                catListRequestProceed: false,
+                                sidebar_sticky: null,
+
+                                catView: catalog_data.catView || 'blocks',
+                                catViewOpts: ['blocks', 'list', 'compact'],
+                                listSort: catalog_data.listSort || catalog_data.listSortOpts[0] || '',
+                                listSortOpts: catalog_data.listSortOpts || [],
+                                filters: {},
+                                activeFilters: {},
+                                fData: {},
+                                searchQuery: ''
+                            },
+
+                            computed: {
+                                collapseBlocks() {
+                                    return this.$refs.catalogSidebar.querySelectorAll('.collapse')
+                                },
+                                activeFiltersCount() {
+                                    return Object.values(this.activeFilters).reduce((sum, f) => {
+                                        if (typeof f == 'object') {
+                                            if (f.hasOwnProperty('length')) return sum += 1
+                                            else if (Object.keys(f).length) return sum += Object.keys(f).length;
+                                        }
+                                        else return sum += 1
+                                    }, 0)
+                                },
+                                cat_items_sorted() {
+                                    return this.$store.state.catalog.products;
+                                },
+                                pagesTotal: function () {
+                                    return Math.ceil(this.$store.state.catalog.itemsTotal / this.pageLimit())
+                                },
+                                pages: function () {
+                                    let total = this.pagesTotal
+
+                                    if (total > 8) {
+                                        let pagesArray = []
+                                        let currPage = this.currPage
+
+                                        if (currPage < 5) {
+                                            for (let i = 1; i <= 5; i++) pagesArray.push(i);
+                                            pagesArray.push('...')
+                                            pagesArray.push(total)
+                                        }
+                                        else if (currPage > total - 4) {
+                                            pagesArray.push(1)
+                                            pagesArray.push('...')
+                                            for (let i = total - 4; i <= total; i++) pagesArray.push(i);
+                                        }
+                                        else {
+                                            pagesArray.push(1)
+                                            pagesArray.push('...')
+
+                                            let offset = mqMatches.screenXsMax ? 1 : 2
+                                            for (let i = currPage - offset; i <= currPage + offset; i++) pagesArray.push(i);
+
+                                            pagesArray.push('...')
+                                            pagesArray.push(total)
+                                        }
+
+                                        return pagesArray;
+                                    }
+                                    else {
+                                        return total;
+                                    }
+                                },
+                            },
+                            methods: {
+                                loadCategory(e) {
+                                    let cat = e.target.getAttribute('href')
+
+                                    if (cat.length > 1) {
+                                        $(e.target).closest('.nav').find('.collapse').collapse('hide')
+                                        $(e.target.getAttribute('href')).collapse('show')
+
+                                        $("#catalog-nav").find('.nav-item.active').removeClass('active')
+                                        $(e.target).blur().parent().addClass('active')
+
+                                        this.oid = cat.substr(1);
+                                        this.oidTitle = e.target.textContent
+                                        this.loadItems()
+                                    }
+                                },
+                                ch_page(page, e) {
+                                    if (typeof page == 'number') {
+                                        this.currPage = page
+                                    }
+                                    else {
+                                        if (page == 'next') this.currPage++
+                                        else if (page == 'prev') this.currPage--;
+                                    }
+                                    e.target.blur()
+                                    this.loadItems()
+                                },
+                                pageLimit() {
+                                    if (this.catView == "list") return 10
+                                    else if (this.catView == "compact") return 20
+                                    else if (this.catView == "blocks") {
+                                        if (mqMatches.screenXsMax) return 8
+                                        else if (mqMatches.screenSmMax) return 16
+                                        else if (mqMatches.screenMdMax) return 24
+                                        else if (mqMatches.screenLgMax) return 16
+                                        else return 24;
+                                    }
+                                },
+
+                                parseFilters(filtersData, f_active) {
+                                    // filtersData - агрегированные данные,
+                                    // f_active - активные фильтры для проверки их корректности
+                                    let vm = this
+
+                                    f_active = $.isEmptyObject(f_active) ? {} : f_active
+                                    if (filtersData && filtersData.length) {
+                                        let f_sorted = filtersData.filter(f => f.hasOwnProperty('controller_type'))
+                                            .sort((f1, f2) => f1.order - f2.order);
+                                        let f_data = {}
+                                        let f_values = {}
+                                        let aggr_group = {}
+
+                                        f_sorted.forEach((f_item) => {
+                                            let rel_type = f_item.relation_type
+
+                                            switch (f_item.controller_type) {
+                                                case "terms_l1":
+                                                    f_data[rel_type] = {
+                                                        'type': 'combobox',
+                                                        'title': f_item.alias,
+                                                        'name': rel_type,
+                                                        'rel_type': rel_type,
+                                                        'data': f_item.keys.map((key) => {
+                                                            return {
+                                                                'text': key.alias,
+                                                                'will_show': key.doc_count,
+                                                                'value': key.object_type
+                                                            }
+                                                        }),
+                                                    };
+
+                                                    f_values[rel_type] = []
+
+                                                    if (f_active.hasOwnProperty(rel_type) && f_active[rel_type].length) {
+                                                        f_active[rel_type].forEach(entry => {
+                                                            f_values[rel_type].push(f_data[rel_type].data.find(k => k.value === entry))
+                                                        });
+                                                    }
+
+                                                    break;
+
+                                                case "terms_l2":
+                                                    if (rel_type === 'HAS_PROPERTY_BOOL' || rel_type === 'HAS_ATTRIBUTE_BOOL') {
+
+                                                        let chboxList = {
+                                                            type: 'controls-list',
+                                                            title: f_item.alias || '',
+                                                            rel_type: rel_type,
+                                                            items: {}
+                                                        }
+                                                        let ynList = {
+                                                            type: 'controls-list',
+                                                            title: f_item.alias || '',
+                                                            rel_type: rel_type,
+                                                            items: {}
+                                                        }
+
+                                                        f_values['chboxList'] = {}
+                                                        f_values['ynList'] = {}
+
+                                                        f_item.keys.forEach((key) => {
+
+                                                            if (key.values.length === 1) {
+                                                                f_values["chboxList"][key.name] = f_active[rel_type]?.hasOwnProperty(key.name) ? f_active[rel_type][key.name] : false;
+
+                                                                chboxList["items"][key.name] = {
+                                                                    'type': 'chbox',
+                                                                    'name': key.name,
+                                                                    'title': key.alias || key.name,
+                                                                    'will_show': key.values[0].doc_count
+                                                                }
+                                                            }
+                                                            else {
+                                                                f_values['ynList'][key.name] = f_active[rel_type]?.hasOwnProperty(key.name) ? f_active[rel_type][key.name] : '';
+
+                                                                ynList["items"][key.name] = {
+                                                                    'type': 'yn-box',
+                                                                    'name': key.name,
+                                                                    'title': key.alias || key.name,
+                                                                    'rel_type': rel_type,
+                                                                    'will_show_no': key.values[0].doc_count,
+                                                                    'will_show_yes': key.values[1].doc_count,
+                                                                }
+                                                            }
+                                                        })
+
+                                                        if (!$.isEmptyObject(chboxList.items)) f_data['chboxList'] = chboxList;
+                                                        if (!$.isEmptyObject(ynList.items)) f_data['ynList'] = ynList;
+                                                        if ($.isEmptyObject(f_values.chboxList)) delete f_values['chboxList'];
+                                                        if ($.isEmptyObject(f_values.ynList)) delete f_values['ynList'];
+
+                                                    }
+                                                    else if (rel_type === 'HAS_PROPERTY_STRING' || rel_type === 'HAS_ATTRIBUTE_STRING') {
+
+                                                        f_item.keys.forEach(function (key) {
+                                                            f_data[key.name] = {
+                                                                'type': 'combobox',
+                                                                'title': key.alias || key.name,
+                                                                'name': key.name,
+                                                                'rel_type': rel_type,
+                                                                'data': key.values.map(function (v) {
+                                                                    return {
+                                                                        'text': v.value,
+                                                                        'value': v.value,
+                                                                        'will_show': v.doc_count,
+                                                                    }
+                                                                }),
+                                                            }
+
+                                                            f_values[key.name] = []
+
+                                                            aggr_group = f_active[rel_type]
+
+                                                            if (aggr_group && aggr_group.hasOwnProperty(key.name) && aggr_group[key.name].length) {
+                                                                aggr_group[key.name].forEach(entry => {
+                                                                    f_values[key.name].push(f_data[key.name].data.find(v => v.value === entry))
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+
+                                                    break;
+
+                                                case "stats_l2":
+                                                    if (rel_type === 'HAS_PROPERTY_FLOAT' || rel_type === 'HAS_ATTRIBUTE_FLOAT') {
+
+                                                        f_item.keys.forEach(function (key) {
+
+                                                            if (key.values.min < key.values.max) {
+
+                                                                f_values[key.name] = [key.values.min, key.values.max]
+                                                                f_data[key.name] = {
+                                                                    'type': 'range-slider',
+                                                                    'title': key.name,
+                                                                    'name': key.name,
+                                                                    'rel_type': rel_type,
+                                                                    'data': f_values[key.name],
+                                                                }
+
+                                                                let all_floats = f_active[rel_type]
+
+                                                                if (all_floats && all_floats.hasOwnProperty(key.name)) {
+                                                                    f_values[key.name] = vm.checkRange(all_floats[key.name], key.values.min, key.values.max)
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                    break;
+
+                                                case "prices_l3":
+
+                                                    // Обновляем данные фильтра
+                                                    let pr_data = f_data[rel_type] = {
+                                                        'type': 'prices',
+                                                        'title': f_item.alias,
+                                                        'rel_type': rel_type,
+                                                        'elems': {}
+                                                    }
+                                                    let pr_elems = pr_data.elems
+
+                                                    pr_elems['currency'] = {
+                                                        'type': 'listbox',
+                                                        'title': 'Валюта',
+                                                        'name': 'currency',
+                                                        'placeholder': 'Выберите валюту...',
+                                                        'data': []
+                                                    }
+                                                    pr_elems['price_name'] = {
+                                                        'type': 'listbox',
+                                                        'title': 'Тип цены',
+                                                        'name': 'price_name',
+                                                        'placeholder': 'Выберите тип цены...',
+                                                        'data': {}
+                                                    }
+                                                    pr_elems['price_range'] = {
+                                                        'type': 'range-slider',
+                                                        'title': 'Диапазон',
+                                                        'name': 'price_range',
+                                                        'data': []
+                                                    }
+
+                                                    f_item.keys.forEach(function (currency) {
+
+                                                        pr_elems.currency.data.push({
+                                                            'text': currency.alias || currency.name,
+                                                            'value': currency.name,
+                                                        })
+
+                                                        pr_elems.price_name.data[currency.name] = currency.values.map(priceNameObj => {
+                                                            return {
+                                                                'text': priceNameObj.price,
+                                                                'value': priceNameObj.price,
+                                                                'min': priceNameObj.min,
+                                                                'max': priceNameObj.max,
+                                                            }
+                                                        });
+
+                                                    });
+
+                                                    // Возвращаем значения фильтра
+                                                    aggr_group = f_active[rel_type]
+                                                    let pr_values = f_values[rel_type] = {}
+
+                                                    pr_values['currency'] = null
+                                                    pr_values['price_name'] = null
+                                                    pr_values['price_range'] = []
+
+                                                    if (aggr_group) {
+                                                        f_item.keys.forEach(currency => {
+
+                                                            if (aggr_group.hasOwnProperty('currency')) {
+                                                                if (currency.name === aggr_group['currency']) pr_values['currency'] = {
+                                                                    'text': currency.alias || currency.name,
+                                                                    'value': currency.name,
+                                                                };
+                                                            }
+
+                                                            if (aggr_group.hasOwnProperty('price_name')) {
+                                                                let priceNameObj = pr_elems.price_name.data[currency.name].find(o => o.value === aggr_group['price_name'])
+
+                                                                if (priceNameObj) pr_values['price_name'] = priceNameObj;
+
+                                                                if (aggr_group.hasOwnProperty('price_range') && aggr_group['price_range'].length && priceNameObj) {
+                                                                    pr_values['price_range'] = vm.checkRange(aggr_group['price_range'], priceNameObj.min, priceNameObj.max);
+                                                                }
+                                                            }
+                                                        });
+
+                                                    }
+                                                    break;
+
+                                                case "stocks_l3":
+
+                                                    // Обновляем данные фильтра
+                                                    let st_data = f_data[rel_type] = {
+                                                        'type': 'stocks',
+                                                        'title': f_item.alias,
+                                                        'rel_type': rel_type,
+                                                        'elems': {}
+                                                    }
+                                                    let st_elems = st_data.elems
+
+                                                    st_elems['store'] = {
+                                                        'type': 'listbox',
+                                                        'title': 'Склад',
+                                                        'name': 'store',
+                                                        'placeholder': 'Выберите склад...',
+                                                        'data': []
+                                                    }
+                                                    st_elems['quant_range'] = {
+                                                        'type': 'range-slider',
+                                                        'title': 'Всего на складе',
+                                                        'name': 'quant_range',
+                                                        'data': []
+                                                    }
+
+                                                    st_elems.store.data[0] = {
+                                                        'text': 'Все',
+                                                        'value': 'all',
+                                                        'min': f_item.keys[0].value.min,
+                                                        'max': f_item.keys[0].value.max,
+                                                    }
+
+                                                    f_item.keys.forEach(store => {
+                                                        let min = store.value.min
+                                                        let max = store.value.max
+
+                                                        if (min !== null && max !== null && min !== max) {
+                                                            st_elems.store.data.push({
+                                                                'text': store.alias || store.name,
+                                                                'value': store.name,
+                                                                'min': min,
+                                                                'max': max,
+                                                            });
+
+                                                            st_elems.store.data[0].min = Math.min(st_elems.store.data[0].min, min);
+                                                            st_elems.store.data[0].max = Math.max(st_elems.store.data[0].max, max);
+                                                        }
+                                                    });
+
+                                                    // Возвращаем значения фильтра
+                                                    aggr_group = f_active[rel_type]
+                                                    let st_values = f_values[rel_type] = {}
+
+                                                    st_values['store'] = null
+                                                    st_values['quant_range'] = []
+
+                                                    if (aggr_group) {
+                                                        if (aggr_group.hasOwnProperty('store')) {
+                                                            st_values.store = st_elems.store.data.find(o => o.value === aggr_group['store']) || null
+                                                        }
+                                                        if (aggr_group.hasOwnProperty('quant_range') && aggr_group['quant_range'].length && st_values.store) {
+                                                            st_values['quant_range'] = vm.checkRange(aggr_group['quant_range'], st_values.store.min, st_values.store.max);
+                                                        }
+                                                    }
+                                                    break;
+
+                                            }
+                                        });
+
+                                        return {f_data, f_values};
+                                    }
+                                },
+
+                                checkRange(range, min, max) {
+                                    range[0] = (min <= range[0] && range[0] <= max) ? range[0] : min;
+                                    range[1] = (min <= range[1] && range[1] <= max) ? range[1] : max;
+                                    return range;
+                                },
+
+                                getAggregatedFilters() {
+                                    let result = {}
+
+                                    for (let fname in this.filters) {
+                                        let prop = this.filters[fname]
+                                        let propData = this.fData[fname]
+                                        let aggr_group = propData.rel_type
+
+                                        if (!result[aggr_group]) result[aggr_group] = {};
+
+                                        if (typeof prop === 'object' && prop !== null) {
+
+                                            if (prop.hasOwnProperty('length')) {
+                                                let val = []
+
+                                                if (propData.type == 'range-slider') val = prop
+                                                else val = prop.map((elem) => elem.value ? elem.value : elem);
+
+                                                if (val.length) {
+                                                    if (fname === aggr_group) result[aggr_group] = val
+                                                    else result[aggr_group][fname] = val;
+                                                }
+                                            }
+                                            else {
+                                                if (prop.value) {
+                                                    if (fname === aggr_group) result[aggr_group] = prop.value
+                                                    else result[aggr_group][fname] = value;
+                                                }
+                                                else if (propData.type == 'controls-list') {
+                                                    Object.keys(prop).forEach(sub_fname => {
+                                                        if (prop[sub_fname]) result[aggr_group][sub_fname] = prop[sub_fname];
+                                                    })
+                                                }
+                                                else if (propData.type == 'prices' || propData.type == 'stocks') {
+                                                    let elems = propData.elems
+
+                                                    Object.keys(prop).forEach(sub_fname => {
+                                                        if (elems[sub_fname].type == 'listbox' && prop[sub_fname]) {
+                                                            result[aggr_group][sub_fname] = prop[sub_fname].value;
+                                                        }
+                                                        if (elems[sub_fname].type == 'range-slider' && prop[sub_fname].length) {
+                                                            result[aggr_group][sub_fname] = prop[sub_fname];
+                                                        }
+                                                    })
+                                                }
+                                            }
+                                        }
+                                        else if (prop) {
+                                            result[aggr_group][fname] = prop
+                                        }
+                                    }
+                                    Object.keys(result).forEach(name => {
+                                        if ($.isEmptyObject(result[name])) delete result[name];
+                                    });
+
+                                    console.log(result);
+                                    return result;
+                                },
+
+                                setURL() {
+                                    let searchParams = new URLSearchParams(window.location.search)
+                                    let {dir, field} = this.listSort
+
+                                    searchParams.set('filter', rison.encode_object(this.activeFilters))
+                                    searchParams.set('sort', rison.encode_object({dir, field}))
+                                    searchParams.set('cat_view', this.catView)
+
+                                    if (this.searchQuery) searchParams.set('query_string', this.searchQuery)
+                                    else searchParams.delete('query_string')
+
+                                    if (this.page > 1) searchParams.set('page', this.currPage)
+                                    else searchParams.delete('page')
+
+                                    if (this.oid) searchParams.set('oid', this.oid)
+                                    else searchParams.delete('oid')
+
+                                    history.pushState(null, null, '?' + searchParams)
+                                },
+
+                                loadItems(silent) {
+                                    let vm = this;
+
+                                    let data = {
+                                        oid: vm.oid,
+                                        limit: vm.pageLimit(),
+                                        from_sku: vm.pageLimit() * (vm.currPage - 1),
+                                        filters: vm.activeFilters || {},
+                                        query_string: vm.searchQuery,
+                                        sort_field: vm.listSort.field,
+                                        sort_dir: vm.listSort.dir,
+                                    }
+                                    if (vm.oid.length) data.oid = vm.oid;
+
+                                    vm.catListRequestProceed = !silent;
+
+                                    vm.$store.dispatch('catalog/get_products', data).then(resp => {
+
+                                        if (resp.aggregations) {
+                                            let {f_data, f_values} = this.parseFilters(resp.aggregations, vm.activeFilters)
+
+                                            vm.$set(vm, 'fData', f_data);
+                                            vm.$set(vm, 'filters', f_values);
+                                            vm.$set(vm, 'activeFilters', vm.getAggregatedFilters());
+                                        }
+
+                                        vm.setURL()
+
+                                        vm.$nextTick(() => {
+                                            vm.catListRequestProceed = false
+                                            vm.sidebar_sticky.update()
+
+                                            setTimeout(() => {
+                                                vm.$el.querySelector('.cat-main').scrollIntoView({behavior: "smooth"})
+                                            }, 100);
+                                        })
+                                    })
+                                },
+
+                                resetFilters() {
+                                    let vm = this;
+
+                                    vm.oid = ''
+                                    vm.currPage = 1
+                                    vm.searchQuery = ''
+                                    document.getElementById('page-hdr_search').querySelector('[type="search"]').value = ''
+
+                                    for (let [fname, fdata] of Object.entries(vm.fData)) {
+                                        if (fdata.type === "combobox") vm.$set(vm.filters, fname, []);
+                                        if (fdata.type === "listbox") vm.$set(vm.filters, fname, null);
+                                        if (fdata.type === "range-slider") vm.$set(vm.filters, fname, fdata.data);
+                                        if (fdata.type === "controls-list") {
+                                            for (let item of Object.values(fdata.items)) {
+                                                if (item.type === "chbox") vm.$set(vm.filters[fname], item.name, false)
+                                                else if (item.type === "yn-box") vm.$set(vm.filters[fname], item.name, '');
+                                            }
+                                        }
+                                        if (fdata.type == 'prices' || fdata.type == 'stocks') {
+                                            for (let elem of Object.values(fdata.elems)) {
+                                                if (elem.type === "range-slider") vm.$set(vm.filters[fname], elem.name, [])
+                                                else if (elem.type === "listbox") vm.$set(vm.filters[fname], elem.name, null);
+                                            }
+                                        }
+                                    }
+                                    vm.$set(vm, 'activeFilters', vm.getAggregatedFilters());
+
+                                    if (vm.$store.state.mobileMode) $(vm.collapseBlocks).collapse('hide');
+                                    vm.$nextTick(vm.loadItems)
+                                },
+
+                                applyFilters() {
+                                    let vm = this;
+
+                                    vm.currPage = 1
+                                    vm.$set(vm, 'activeFilters', vm.getAggregatedFilters());
+                                    vm.$nextTick(vm.loadItems)
+
+                                    if (vm.$store.state.mobileMode) $(vm.collapseBlocks).collapse('hide');
+                                },
+
+                                createSubNav(subtree) {
+                                    let list = {}
+                                    for (let branch of subtree) {
+                                        list[branch.oid] = {
+                                            oid: branch.oid,
+                                            text: branch.alias,
+                                            active: branch.active,
+                                            icon: branch.iconCls
+                                        }
+                                        if (branch.hasOwnProperty('contains')) {
+                                            list[branch.oid].subtree = this.createSubNav(branch.contains)
+                                        }
+                                        if (this.oid == branch.oid) this.oidTitle = branch.alias
+                                    }
+                                    return list;
+                                },
+
+                                createNav(tree) {
+                                    if (tree) this.chapters = this.createSubNav(tree);
+                                },
+
+                            },
+
+                            watch: {
+                                catView(newval, oldval) {
+                                    this.loadItems(true)
+                                }
+                            },
+
+                            created() {
+                                let vm = this;
+                                let searchParams = new URLSearchParams(window.location.search)
+
+                                let oid = searchParams.get('oid')
+                                let p = searchParams.get('page')
+                                let v = searchParams.get('view')
+                                let s = searchParams.get('sort')
+                                let f = searchParams.get('filter')
+                                let q = searchParams.get('query_string')
+
+                                // формирование фильтров из URL
+                                let f_url = f ? rison.decode_object(f) : {}
+
+                                let {f_data, f_values} = vm.parseFilters(catalog_data.aggregations)
+
+                                if ($.isEmptyObject(f_url)) {
+                                    vm.$set(vm, 'fData', f_data);
+                                    vm.$set(vm, 'filters', f_values);
+                                    vm.$set(vm, 'activeFilters', vm.getAggregatedFilters());
+                                }
+                                else {
+                                    vm.$set(vm, 'activeFilters', f_url);
+                                }
+
+                                // сортировка из URL
+                                if (s) {
+                                    s = rison.decode_object(s)
+                                    s = typeof s == 'object' ? vm.listSortOpts.find(o => o.field == s.field && o.dir == s.dir) : null
+                                    vm.listSort = s ? s : vm.listSortOpts[0]
+                                }
+
+                                // номер страницы из URL
+                                if (p) {
+                                    p = parseInt(p)
+                                    vm.currPage = p ? p : 1;
+                                }
+
+                                // вид каталога из URL
+                                if (v && vm.catViewOpts.indexOf(v) >= 0) vm.catView = v;
+
+                                // текущая категория из URL
+                                if (oid) vm.oid = oid;
+
+                                // текущий поиск из URL
+                                if (q) {
+                                    let sField = document.getElementById('page-hdr_search').querySelector('[type="search"]')
+
+                                    if (sField) sField.value = q
+                                    vm.searchQuery = q;
+                                }
+
+                                // создаём разделы
+                                if (catalog_data.navlist) vm.createNav(catalog_data.navlist);
+
+                                // грузим товары при наличии фильтров и пр.
+                                if (q || oid || p || f || s || v) vm.loadItems();
+                            },
+
+                            mounted() {
+                                let vm = this
+                                let sidebar = document.getElementById('catalog-sidebar');
+
+                                vm.isLoading = false;
+
+                                if (vm.oid) {
+                                    let link = document.querySelector('[href="#' + vm.oid + '"]')
+
+                                    if (link) {
+                                        this.$nextTick(() => {
+                                            link.parentElement.classList.add('active');
+                                            $(link).closest('.collapse').collapse('show')
+                                        })
+                                    }
+                                }
+
+                                if (sidebar) {
+                                    vm.sidebar_sticky = new hcSticky(sidebar, {
+                                        responsive: {
+                                            [mqBreakPoints.screenMdMax]: {disabled: true}
+                                        }
+                                    })
+                                }
+                                ;
+
+                            }
+
+                        });
+                    }
+                });
+                /* END - каталог */
+            </script>
+
+            <script>
+                let catalog_data = {
+
+                    currOID: '',
+                    catView: 'list',
+                    listSort: {'field': 'price', 'dir': 'asc', 'text': 'Сначала дешёвые'},
+                    listSortOpts: [
+                        {'text': 'Сначала популярные', 'field': 'rating', 'dir': 'desc'},
+                        {'text': 'Сначала дешёвые', 'field': 'price', 'dir': 'asc'},
+                        {'text': 'Сначала дорогие', 'field': 'price', 'dir': 'desc'},
+                        {'text': 'Сначала новые', 'field': 'prod_date', 'dir': 'desc'},
+                        {'text': 'Сначала старые', 'field': 'prod_date', 'dir': 'asc'},
+                    ],
+
+                    navlist: [
+                        {
+                            "object_type": "object_group_sku",
+                            "oid": "df218708-6e8d-49d8-a4d3-a5f7e091c486",
+                            "alias": "\u0421\u043f\u043e\u0440\u0442\u0438\u0432\u043d\u044b\u0435 \u0442\u043e\u0432\u0430\u0440\u044b",
+                            "iconCls": "fa-boxes",
+                            "contains": [
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "76818c30-9a1f-4e4f-badb-b7f0579b7301",
+                                    "alias": "\u0410\u043a\u0442\u0438\u0432\u043d\u044b\u0439 \u043e\u0442\u0434\u044b\u0445",
+                                    "iconCls": "fa-boxes",
+                                    "contains": [
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "ff57d5b3-a63d-483d-91f7-44dcebc6d465",
+                                            "alias": "\u0411\u0430\u0434\u043c\u0438\u043d\u0442\u043e\u043d",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "66fc2ea5-c531-497b-bbb0-dce7e3aba3e8",
+                                            "alias": "\u0411\u0430\u0442\u0443\u0442\u044b",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "fefb88b9-ee7a-47fe-a3d0-32e3fa5ec004",
+                                            "alias": "\u0414\u0432\u0443\u0445\u043a\u043e\u043b\u0435\u0441\u043d\u044b\u0435 \u0441\u0430\u043c\u043e\u043a\u0430\u0442\u044b",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "0c16d46e-d9d3-4cc3-895c-14124246f285",
+                                            "alias": "\u0414\u0435\u0442\u0441\u043a\u0438\u0435 \u0441\u0430\u043c\u043e\u043a\u0430\u0442\u044b",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "f7c84aa3-2f98-4418-9581-36bebcd8738e",
+                                            "alias": "\u0417\u0430\u0449\u0438\u0442\u0430 \u0438 \u0430\u043a\u0441\u0435\u0441\u0441\u0443\u0430\u0440\u044b",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "f3cf2580-7502-4207-804c-a6ce7c84a3c4",
+                                            "alias": "\u041a\u0440\u0443\u0438\u0437\u0435\u0440\u044b",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "41f41ba0-c47c-4d38-bf3f-3047e48e19df",
+                                            "alias": "\u041b\u043e\u043d\u0433\u0431\u043e\u0440\u0434\u044b",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "59c3d6ce-2851-437d-9b0c-b2857ac4605d",
+                                            "alias": "\u0420\u043e\u043b\u0438\u043a\u043e\u0432\u044b\u0435 \u043a\u043e\u043d\u044c\u043a\u0438",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "8fc242e6-d3c3-4c95-bac6-359f409202ed",
+                                            "alias": "\u0421\u043a\u0430\u043d\u0434\u0438\u043d\u0430\u0432\u0441\u043a\u0430\u044f \u0445\u043e\u0434\u044c\u0431\u0430",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "a4a17c2d-c641-463a-bf52-d5c41a0dcf1d",
+                                            "alias": "\u0421\u043a\u0435\u0439\u0442\u0431\u043e\u0440\u0434\u044b",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "5a7c2e38-8d9e-4726-a10d-ba3d8b83698c",
+                                            "alias": "\u0422\u0440\u044e\u043a\u043e\u0432\u044b\u0435 \u0441\u0430\u043c\u043e\u043a\u0430\u0442\u044b",
+                                            "iconCls": "fa-boxes"
+                                        },
+                                        {
+                                            "object_type": "object_group_sku",
+                                            "oid": "20200e65-70c8-43a1-8c1d-982f52d988d5",
+                                            "alias": "\u0427\u0435\u0445\u043b\u044b \u0438 \u0441\u0443\u043c\u043a\u0438",
+                                            "iconCls": "fa-boxes"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "961753b4-bbe5-4800-9ec1-ba8b825298a7",
+                                    "alias": "\u0413\u0435\u0442\u0440\u044b \u0434\u043b\u044f \u0445\u0443\u0434\u043e\u0436\u0435\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0439 \u0433\u0438\u043c\u043d\u0430\u0441\u0442\u0438\u043a\u0438 \u043e\u043f\u0442\u043e\u043c",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "ffafbe6f-4178-49f2-b7d5-069f837a0acf",
+                                    "alias": "\u0414\u0435\u0442\u044f\u043c",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "7e644855-bb03-4e88-9fe4-611b95bc2df2",
+                                    "alias": "\u0415\u0434\u0438\u043d\u043e\u0431\u043e\u0440\u0441\u0442\u0432\u0430",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "ad26e282-88d7-43c7-bf6c-3f11e9709dfe",
+                                    "alias": "\u0417\u0438\u043c\u043d\u0438\u0439 \u0441\u043f\u043e\u0440\u0442",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "537c652d-2891-47b7-ae00-61ea6febb8f7",
+                                    "alias": "\u0418\u0433\u0440\u044b",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "951aaf89-ced9-45e4-8897-76eb385de764",
+                                    "alias": "\u0419\u043e\u0433\u0430 \u0438 \u043f\u0438\u043b\u0430\u0442\u0435\u0441",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "1b3520ce-dc20-4788-8bb5-467ed2078b3c",
+                                    "alias": "\u041a\u043e\u043c\u0430\u043d\u0434\u043d\u044b\u0439 \u0441\u043f\u043e\u0440\u0442",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "1c641a2b-2018-4339-a9d4-f33579f05abf",
+                                    "alias": "\u041a\u0443\u043f\u0430\u043b\u044c\u043d\u0438\u043a\u0438 \u0434\u043b\u044f \u0445\u0443\u0434\u043e\u0436\u0435\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0439 \u0433\u0438\u043c\u043d\u0430\u0441\u0442\u0438\u043a\u0438 \u043e\u043f\u0442\u043e\u043c",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "49057d87-4dff-4e61-8728-4bc35a521e51",
+                                    "alias": "\u041e\u0431\u043c\u043e\u0442\u043a\u0430 \u0434\u043b\u044f \u043e\u0431\u0440\u0443\u0447\u0435\u0439 \u0434\u043b\u044f \u0445\u0443\u0434\u043e\u0436\u0435\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0439 \u0433\u0438\u043c\u043d\u0430\u0441\u0442\u0438\u043a\u0438 \u043e\u043f\u0442\u043e\u043c",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "022428fc-6a0b-4c4b-84a9-3484a39c4091",
+                                    "name": "\u041f\u043b\u0430\u0432\u0430\u043d\u0438\u0435",
+                                    "alias": "\u041f\u043b\u0430\u0432\u0430\u043d\u0438\u0435",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "c5a62b6c-d017-49e6-b2c8-5ee209980d65",
+                                    "name": "\u0422\u0440\u0435\u043d\u0430\u0436\u0435\u0440\u044b",
+                                    "alias": "\u0422\u0440\u0435\u043d\u0430\u0436\u0435\u0440\u044b",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "9e46eebd-24df-4263-94b7-233be7e261ed",
+                                    "name": "\u0424\u0438\u0442\u043d\u0435\u0441",
+                                    "alias": "\u0424\u0438\u0442\u043d\u0435\u0441",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "b335a812-4b8f-4283-bb6c-b434328315df",
+                                    "name": "\u0425\u0443\u0434\u043e\u0436\u0435\u0441\u0442\u0432\u0435\u043d\u043d\u0430\u044f \u0433\u0438\u043c\u043d\u0430\u0441\u0442\u0438\u043a\u0430",
+                                    "alias": "\u0425\u0443\u0434\u043e\u0436\u0435\u0441\u0442\u0432\u0435\u043d\u043d\u0430\u044f \u0433\u0438\u043c\u043d\u0430\u0441\u0442\u0438\u043a\u0430",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "85d28001-537a-474a-9dbb-d3ff8f8f1b5a",
+                                    "alias": "\u0425\u0443\u0434\u043e\u0436\u0435\u0441\u0442\u0432\u0435\u043d\u043d\u0430\u044f \u0433\u0438\u043c\u043d\u0430\u0441\u0442\u0438\u043a\u0430 \u043e\u043f\u0442\u043e\u043c",
+                                    "iconCls": "fa-boxes"
+                                }
+                            ]
+                        },
+                        {
+                            "object_type": "object_group_sku",
+                            "oid": "object_group_sku_missing_relations_primary",
+                            "alias": "\u0410\u041d\u0410\u041b\u0418\u0417: \u041d\u0430\u0440\u0443\u0448\u0435\u043d\u0438\u0435 \u0441\u0432\u044f\u0437\u0435\u0439 \u0432 \u043a\u0430\u0442\u0430\u043b\u043e\u0433\u0435",
+                            "iconCls": "fa-boxes"
+                        },
+                        {
+                            "object_type": "object_group_sku",
+                            "oid": "object_group_sku_new_primary",
+                            "alias": "\u041d\u043e\u0432\u044b\u0435 \u0442\u043e\u0432\u0430\u0440\u044b \u0438 \u0443\u0441\u043b\u0443\u0433\u0438",
+                            "iconCls": "fa-boxes"
+                        },
+                        {
+                            "object_type": "object_group_sku",
+                            "oid": "object_group_sku_processed_primary",
+                            "alias": "\u041e\u0431\u0440\u0430\u0431\u043e\u0442\u0430\u043d\u043d\u044b\u0435 \u0442\u043e\u0432\u0430\u0440\u044b \u0438 \u0443\u0441\u043b\u0443\u0433\u0438",
+                            "iconCls": "fa-boxes"
+                        },
+                        {
+                            "object_type": "object_group_sku",
+                            "oid": "object_group_sku_tests_primary",
+                            "alias": "\u0422\u0415\u0421\u0422: \u0433\u0440\u0443\u043f\u043f\u0430 \u0434\u043b\u044f \u0430\u0432\u0442\u043e\u0442\u0435\u0441\u0442\u043e\u0432",
+                            "iconCls": "fa-boxes",
+                            "contains": [
+                                {
+                                    "object_type": "sku",
+                                    "oid": "test_sku_1",
+                                    "alias": "test_sku_1",
+                                    "iconCls": "fa-box"
+                                },
+                                {
+                                    "object_type": "sku",
+                                    "oid": "test_sku_3",
+                                    "alias": "test_sku_3",
+                                    "iconCls": "fa-box"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "test_object_group_1",
+                                    "alias": "\u0442\u0435\u0441\u043e\u0432\u0430\u044f \u0433\u0440\u0443\u043f\u043f\u0430 \u0442\u043e\u0432\u0430\u0440\u043e\u0432 1",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "object_type": "object_group_sku",
+                                    "oid": "test_object_group_2",
+                                    "alias": "\u0442\u0435\u0441\u043e\u0432\u0430\u044f \u0433\u0440\u0443\u043f\u043f\u0430 \u0442\u043e\u0432\u0430\u0440\u043e\u0432 2",
+                                    "iconCls": "fa-boxes"
+                                },
+                                {
+                                    "oid": "92c166fa-5b9d-43bc-ad39-eeaecaad5879",
+                                    "alias": "term_clone",
+                                    "iconCls": "fa-circle",
+                                    "object_type": "term_clone",
+                                }
+                            ]
+                        },
+                        {
+                            "oid": "ed74b1b6-1b43-45ad-890f-d50dcd2a7310",
+                            "alias": "term_clone",
+                            "iconCls": "fa-circle",
+                            "object_type": "term_clone",
+                        }
+                    ],
+
+                    aggregations: [
+                        {
+                            "doc_count_error_upper_bound": 0,
+                            "sum_other_doc_count": 0,
+                            "keys": [
+                                {
+                                    "doc_count": 10,
+                                    "alias": " \u0421\u0432\u043e\u0439\u0441\u0442\u0432\u043e - \u0434\u0430 \u043d\u0435\u0442",
+                                    "object_type": "property_bool"
+                                },
+                                {
+                                    "doc_count": 7,
+                                    "alias": "\u0422\u043e\u0432\u0430\u0440\u043d\u0430\u044f \u0433\u0440\u0443\u043f\u043f\u0430",
+                                    "object_type": "object_group_sku"
+                                },
+                                {
+                                    "doc_count": 4,
+                                    "alias": "\u0422\u043e\u0432\u0430\u0440",
+                                    "object_type": "sku"
+                                },
+                                {
+                                    "doc_count": 2,
+                                    "alias": "\u0422\u043e\u0432\u0430\u0440\u043d\u0430\u044f \u0433\u0440\u0443\u043f\u043f\u0430",
+                                    "object_type": "object_group_material"
+                                }
+                            ],
+                            "alias": "\u0422\u0438\u043f\u044b \u043e\u0431\u044a\u0435\u043a\u0442\u043e\u0432",
+                            "controller_type": "terms_l1",
+                            "order": 0,
+                            "relation_type": "object_types"
+                        },
+                        {
+                            "doc_count": 40,
+                            "controller_type": "terms_l2",
+                            "keys": [
+                                {
+                                    "name": "11_test_property_bool_0",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "11_test_property_bool_1",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "11_test_property_bool_2",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "11_test_property_bool_3",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "11_test_property_bool_4",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "15_test_property_bool",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "9_test_property_bool_1",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "9_test_property_bool_2",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "9_test_property_bool_3",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                },
+                                {
+                                    "name": "9_test_property_bool_4",
+                                    "values": [
+                                        {
+                                            "doc_count": 4,
+                                            "value": true
+                                        }
+                                    ],
+                                    "doc_count": 4
+                                }
+                            ],
+                            "alias": "\u0421\u0432\u043e\u0439\u0441\u0442\u0432\u0430, \u043b\u043e\u0433\u0438\u043a\u0430",
+                            "order": 6,
+                            "relation_type": "HAS_PROPERTY_BOOL"
+                        },
+                        {
+                            "count": 0,
+                            "relation_type": "centroid",
+                            "order": 1000
+                        },
+                        {
+                            "relation_type": "bounds",
+                            "order": 1000
+                        }
+                    ],
+
+                    itemsTotal: 224,
+                    cat_items: [
+                        {
+                            "id": "id01",
+                            "link": "item.html",
+                            "title": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 100 шт",
+                            "total": 20,
+                            "price": "56",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-01.jpg",
+                            "imgAlt": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 100 шт",
+                            "favorite": false,
+                            "rating": 100,
+                            "prod_date": "2020-10-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id02",
+                            "link": "item.html",
+                            "title": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                            "total": 10,
+                            "price": "6222",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-02.jpg",
+                            "imgAlt": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                            "favorite": true,
+                            "rating": 130,
+                            "prod_date": "2020-08-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id03",
+                            "link": "item.html",
+                            "title": "Палочки ватные OLA! Silk sense в полиэтил.упак., Россия, 200 шт ",
+                            "total": 10,
+                            "price": "363",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-03.jpg",
+                            "imgAlt": "Палочки ватные OLA! Silk sense в полиэтил.упак., Россия, 200 шт ",
+                            "favorite": false,
+                            "rating": 60,
+                            "prod_date": "2020-05-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id04",
+                            "link": "item.html",
+                            "title": "Палочки ватные ЛЕНТА стакан круглый, Россия, 200 шт ",
+                            "total": 10,
+                            "price": "48",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-04.jpg",
+                            "imgAlt": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                            "favorite": false,
+                            "rating": 100,
+                            "prod_date": "2020-07-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id05",
+                            "link": "item.html",
+                            "title": "Диски ватные SPA COTTON Argan, Россия, 40 шт",
+                            "total": 100,
+                            "price": "68",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-05.jpg",
+                            "imgAlt": "Диски ватные SPA COTTON Argan, Россия, 40 шт ",
+                            "favorite": false,
+                            "rating": 1100,
+                            "prod_date": "2020-09-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id06",
+                            "link": "item.html",
+                            "title": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 100 шт",
+                            "total": 20,
+                            "price": "56",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-01.jpg",
+                            "imgAlt": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 100 шт",
+                            "favorite": false,
+                            "rating": 90,
+                            "prod_date": "2020-06-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id07",
+                            "link": "item.html",
+                            "title": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                            "total": 10,
+                            "price": "6222",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-02.jpg",
+                            "imgAlt": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                            "favorite": true,
+                            "rating": 80,
+                            "prod_date": "2020-02-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id08",
+                            "link": "item.html",
+                            "title": "Палочки ватные OLA! Silk sense в полиэтил.упак., Россия, 200 шт ",
+                            "total": 10,
+                            "price": "363",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-03.jpg",
+                            "imgAlt": "Палочки ватные OLA! Silk sense в полиэтил.упак., Россия, 200 шт ",
+                            "favorite": false,
+                            "rating": 50,
+                            "prod_date": "2020-03-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id09",
+                            "link": "item.html",
+                            "title": "Палочки ватные ЛЕНТА стакан круглый, Россия, 200 шт ",
+                            "total": 10,
+                            "price": "48",
+                            "discount": "",
+                            "step": 1,
+                            "img": "static/img/content/catalog/cat-item-04.jpg",
+                            "imgAlt": "Палочки ватные 365 ДНЕЙ Пакет, Россия, 200 шт",
+                            "favorite": false,
+                            "rating": 20,
+                            "prod_date": "2020-01-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                        {
+                            "id": "id010",
+                            "link": "item.html",
+                            "title": "Диски ватные SPA COTTON Argan, Россия, 40 шт",
+                            "total": 100,
+                            "price": "68",
+                            "discount": "",
+                            "step": 0.1,
+                            "img": "static/img/content/catalog/cat-item-05.jpg",
+                            "imgAlt": "Диски ватные SPA COTTON Argan, Россия, 40 шт ",
+                            "favorite": false,
+                            "rating": 10,
+                            "prod_date": "2020-04-01T00:00:00.000Z",
+                            "specs": [
+                                {"term": "Бренд", "def": "365 дней"},
+                                {"term": "Упаковка", "def": "100 штук"},
+                                {"term": "Страна производителя", "def": "Россия"},
+                                {"term": "Производитель", "def": "Марал-Трейд ТК ООО"}
+                            ]
+                        },
+                    ],
+                };
+            </script>
+
+
+            <!-- Плагины, загруженные по ссылке
+	https://cdn.jsdelivr.net/combine/npm/swiper@6.3/swiper-bundle.min.js,npm/@fancyapps/fancybox@3.5/dist/jquery.fancybox.min.js,npm/overlayscrollbars@1.13/js/jquery.overlayScrollbars.min.js,npm/hc-sticky@2.2/dist/hc-sticky.min.js,npm/lozad/dist/lozad.min.js
+-->
+            <script src="{% static 'js/separate-js/page-end-plugins.js' %}"></script>
+
+            <!-- 	Общий скрипт	 -->
+            <script src="{% static 'js/common.js' %}" charset="utf-8"></script>
+
+            <!-- Плагины vuejs
+	https://cdn.jsdelivr.net/combine/npm/vue-multiselect@2.1/dist/vue-multiselect.min.js,npm/vue-recaptcha@1.3/dist/vue-recaptcha.min.js,npm/overlayscrollbars-vue@0.2/dist/overlayscrollbars-vue.min.js,npm/vue-snotify@3/vue-snotify.min.js,npm/vue-slider-component@3/dist/vue-slider-component.umd.min.js
+-->
+            <script src="{% static 'js/separate-js/vue-plugins.js' %}"></script>
+
+            <script>
+                if (typeof Vue !== "undefined") {
+                		Vue.use(window.Snotify)
+                		Vue.component('multiselect', window.VueMultiselect.default)
+                		Vue.component('vue-slider', window['vue-slider-component'])
+                		Vue.component('scrollbars', window.OverlayScrollbarsVue.OverlayScrollbarsComponent);
+                		// Vue.component('vue-recaptcha', window.VueRecaptcha)	// Подключается на формы вместо reCaptcha
+
+                		Snotify.setDefaults({
+                			global: {
+                				preventDuplicates: true,
+                			}
+                		})
+
+                	};
+            </script>
+
+        </div>
+
+    </body>
+
+
+
+{% endblock content %}

@@ -1,0 +1,50 @@
+{% load static wagtailcore_tags base_tags %}
+{% get_site_root as site_root %}
+
+
+<header role="banner" class="page_hdr">
+    <div class="container-fluid navbar navbar-expand-xl">
+
+        <a class="navbar-brand" href="/" title="На главную страницу">
+            <img src="{% static 'img/general/logo.svg' %}" class="img-fluid" width="138" height="93"
+                 alt="Амелия &mdash; Забота о каждом">
+        </a>
+
+        {# Добавление пунктов топ-меню в соответствии наличия созданных страниц (без menuitem.show_dropdown)#}
+        <div class="page-hdr_mid collapse navbar-collapse" id="site-nav">
+            <nav class="page-hdr_nav navbar-nav" role="navigation">
+
+
+
+                {% for menuitem in menuitems %}
+                    <div class="nav-item {{ menuitem.title|lower|cut:" " }}{% if menuitem.active %} active {% endif %}">
+                        <a class="nav-link" href="{% pageurl menuitem %}"
+                           role="menuitem"><span>{{ menuitem.title }}</span></a>
+                    </div>
+                {% endfor %}
+            </nav>
+        </div>
+        {# Конец топ-меню #}
+
+        <div class="page-hdr_right" id="hdr-user-block">
+            <a href="#page-hdr_search" role="button" class="page-hdr_search-trigger btn btn-link d-sm-none"
+               aria-haspopup="true" aria-expanded="false">
+                <i class="fal fa-lg fa-search mr-md-3"></i>
+            </a>
+            <div class="page-hdr_user">
+                <a href="#modalRegLogin" role="button" data-toggle="modal" data-backdrop="static" class="btn btn-link">
+                    <i class="fal fa-lg fa-unlock mr-2 mr-md-3"></i><span>Вход / Регистрация</span>
+                </a>
+            </div>
+
+            <button type="button" class="navbar-toggler btn btn-link" data-toggle="collapse" data-target="#site-nav"
+                    aria-controls="site-nav" aria-expanded="false" aria-label="Переключить навигацию">
+                <i class="far fa-bars mr-md-3"></i><span class="navbar-toggler-text">Навигация</span>
+            </button>
+
+            <vue-snotify></vue-snotify>
+
+        </div>
+
+    </div>
+</header>
